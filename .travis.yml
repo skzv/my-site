@@ -25,8 +25,3 @@ cache: bundler # caching bundler gem packages will speed up build
 # Optional: disable email notifications about the outcome of your builds
 notifications:
   email: false
-
-deploy:
-  provider: pages:git
-  token: ${{ secrets.GITHUBTOKEN }}
-  edge: true # opt in to dpl v2
