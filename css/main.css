@@ -60,6 +60,7 @@ canvas {
 
 .name-card h1 {
     margin: 30px 30px 0px 30px;
+    color: #000;
 }
 
 .name-card .btn {
@@ -69,6 +70,12 @@ canvas {
 @media (max-width: 1000px) {
     .name-card {
         top: 40%;
+    }
+}
+
+@media (max-width: 400px) {
+    .name-card .btn {
+        width: 250px;
     }
 }
 
@@ -240,6 +247,33 @@ canvas {
     color: #fff;
     background-color: transparent;
     border-color: #fff;
+}
+
+/* Black */
+
+.btn-black {
+    color: #000;
+    border-color: #000;
+}
+
+.btn-black:hover,
+.btn-black:focus {
+    color: #03af60;
+    background-color: #292929;
+    border-color: #292929;
+}
+
+.btn-black.inverse {
+    color: #03af60;
+    background-color: #292929;
+    border-color: #292929;
+}
+
+.btn-black.inverse:hover,
+.btn-black.inverse:focus {
+    color: #292929;
+    background-color: transparent;
+    border-color: #292929;
 }
 
 
@@ -483,6 +517,32 @@ canvas {
 
 .btn-glossy.btn-dark.inverse:hover span {
     color: #292929;
+}
+
+/* Black */
+
+.btn-glossy.btn-black:before {
+    background-color: #000;
+}
+
+.btn-glossy.btn-black:hover span {
+    color: #03af60;
+}
+
+.btn-glossy.btn-black.inverse {
+    background-color: #000;
+}
+
+.btn-glossy.btn-black.inverse:before {
+    background-color: white;
+}
+
+.btn-glossy.btn-black.inverse span {
+    color: white;
+}
+
+.btn-glossy.btn-black.inverse:hover span {
+    color: #000;
 }
 
 @-webkit-keyframes onHover {
