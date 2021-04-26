@@ -1,3 +1,7 @@
+# Site Settings
+url:                https://skz.dev # main url
+
+# Other Settings
 plugins:
   - jekyll-sitemap
   - jekyll-seo-tag
