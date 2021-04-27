@@ -52,7 +52,8 @@
 
     <!--    TODO: make init camera position higher-->
     <script type="module" async>
-        import * as THREE from '/js/three.module.js';
+        // import * as THREE from '/js/three.module.js';
+		import * as THREE from 'https://cdn.skypack.dev/three@0.128.0';
 //			import Stats from '/js/stats.module.js';
 			var SEPARATION = 100, AMOUNTX = 200, AMOUNTY = 200;
 //			var container, stats;
@@ -87,8 +88,8 @@
 					}
 				}
 				var geometry = new THREE.BufferGeometry();
-				geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
-				geometry.addAttribute( 'scale', new THREE.BufferAttribute( scales, 1 ) );
+				geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
+				geometry.setAttribute( 'scale', new THREE.BufferAttribute( scales, 1 ) );
 				var material = new THREE.ShaderMaterial( {
 					uniforms: {
 						color: { value: new THREE.Color( 0xffffff ) },
