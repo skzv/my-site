@@ -140,6 +140,7 @@ canvas {
     transition: color .6s ease, background-color .6s ease;
     opacity: 1.0;
     margin: 30px 30px 0px 30px;
+    cursor: pointer;
 }
 
 .btn:hover,
