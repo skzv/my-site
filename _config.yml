@@ -5,3 +5,8 @@ url:                https://skz.dev # main url
 plugins:
   - jekyll-sitemap
   - jekyll-seo-tag
+
+defaults:
+  -
+    values:
+      layout:       "compress"
