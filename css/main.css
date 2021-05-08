@@ -1,0 +1,603 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
+
+body {
+    margin: 0;
+    background-color: #000;
+    color: #fff;
+    /* font-family: Monospace; */
+    font-size: 13px;
+    line-height: 24px;
+    overflow: hidden;
+    /* font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; */
+    font-family: 'Montserrat', sans-serif;
+}
+
+* {
+    font-family: 'Montserrat', sans-serif;
+}
+
+a {
+    color: #ff0;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+canvas {
+    display: block;
+}
+
+#info {
+    position: absolute;
+    top: 95%;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    text-align: right;
+    z-index: 1;
+    /* TODO Solve this in HTML */
+}
+
+.dg.ac {
+    z-index: 2 !important;
+    /* TODO Solve this in HTML */
+}
+
+.centered {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    /* bring your own prefixes */
+    transform: translate(-50%, -50%);
+}
+
+.name-card {
+    text-align: center;
+    background-color: white;
+    /* top: 33%; */
+/*    opacity: 1;*/
+    background: rgba(255, 255, 255, 0.60);
+    border-radius: 25px;
+    /* padding: 20px; */
+    padding: 0px;
+    top: 40%;
+}
+
+.name-card h1 {
+    margin: 30px 30px 0px 30px;
+    color: #000;
+}
+
+.name-card .btn {
+    width: 300px;
+}
+
+@media (max-width: 1000px) {
+    .name-card {
+        top: 40%;
+    }
+}
+
+@media (max-width: 400px) {
+    .name-card .btn {
+        width: 250px;
+    }
+}
+
+.social img {
+    display: block;
+    /*margin-left: 50%;*/
+    width: 40px;
+    /*transition: transform .2s; /* Animation */
+    /* max-width:30%; */
+    /* max-height:100%; */
+    /* width: auto; */
+    /* height: auto; */
+    margin: 30px 0px 30px 0px;
+}
+
+.social :first-child img {
+    margin-left: 30px;
+}
+
+.social :last-child img {
+    margin-right: 30px;
+}
+
+.social {
+    /* position: absolute; */
+    /* left: 50%; */
+    /*width: 80%;*/
+    /*height: 50px;
+    /* transform: translate(-50%, -50%); */
+    display: flex;
+    justify-content: space-between;
+}
+
+.social img:hover {
+    transform: scale(1.5);
+    /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+}
+
+/* Button
+============================================= */
+
+.btn {
+    color: #03af60;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: 1px;
+    /* text-transform: uppercase; */
+    padding: 22px 35px;
+    background-color: transparent;
+    border-color: #03af60;
+    border-radius: 3px;
+    -webkit-transition: color .6s ease, background-color .6s ease;
+    transition: color .6s ease, background-color .6s ease;
+    opacity: 1.0;
+    margin: 30px 30px 0px 30px;
+    cursor: pointer;
+}
+
+.btn:hover,
+.btn:focus {
+    background-color: #03af60;
+    color: #fff;
+}
+
+.btn:hover,
+.btn:focus,
+.btn:active,
+.btn:focus:active,
+.btn.focus {
+    outline: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.btn.inverse {
+    border: 0;
+    color: #fff;
+    background-color: #03af60;
+    padding: 23px 35px;
+}
+
+.btn.inverse:hover,
+.btn.inverse:focus {
+    color: #03af60;
+    background-color: transparent;
+}
+
+
+/* Size */
+
+.btn-lg {
+    padding: 42px 35px;
+    letter-spacing: 4px;
+}
+
+.btn-lg.inverse {
+    padding: 43px 35px;
+}
+
+.btn-sm {
+    padding: 17px 20px;
+}
+
+.btn-sm.inverse {
+    padding: 18px 20px;
+}
+
+.btn-xs {
+    font-size: 12px;
+    padding: 13px 20px;
+}
+
+.btn-xs.inverse {
+    font-size: 12px;
+    padding: 14px 20px;
+}
+
+
+/* Lighter */
+
+.btn-lighter {
+    color: #a99261;
+    border-color: #a99261;
+}
+
+.btn-lighter:hover,
+.btn-lighter:focus {
+    color: #fff;
+    background-color: #a99261;
+    border-color: #a99261;
+}
+
+.btn-lighter.inverse {
+    color: #fff;
+    background-color: #a99261;
+    border-color: #a99261;
+}
+
+.btn-lighter.inverse:hover,
+.btn-lighter.inverse:focus {
+    color: #a99261;
+    background-color: transparent;
+    border-color: #a99261;
+}
+
+
+/* White */
+
+.btn-white {
+    color: #fff;
+    border-color: #fff;
+}
+
+.btn-white:hover,
+.btn-white:focus {
+    color: #333;
+    background-color: #fff;
+    border-color: #fff;
+}
+
+.btn-white.inverse {
+    color: #333;
+    background-color: #fff;
+    border-color: #fff;
+}
+
+.btn-white.inverse:hover,
+.btn-white.inverse:focus {
+    color: #fff;
+    background-color: transparent;
+    border-color: #fff;
+}
+
+/* Black */
+
+.btn-black {
+    color: #000;
+    border-color: #000;
+}
+
+.btn-black:hover,
+.btn-black:focus {
+    color: #03af60;
+    background-color: #292929;
+    border-color: #292929;
+}
+
+.btn-black.inverse {
+    color: #03af60;
+    background-color: #292929;
+    border-color: #292929;
+}
+
+.btn-black.inverse:hover,
+.btn-black.inverse:focus {
+    color: #292929;
+    background-color: transparent;
+    border-color: #292929;
+}
+
+
+/* Dark */
+
+.btn-dark {
+    color: #292929;
+    border-color: #292929;
+}
+
+.btn-dark:hover,
+.btn-dark:focus {
+    color: #03af60;
+    background-color: #292929;
+    border-color: #292929;
+}
+
+.btn-dark.inverse {
+    color: #03af60;
+    background-color: #292929;
+    border-color: #292929;
+}
+
+.btn-dark.inverse:hover,
+.btn-dark.inverse:focus {
+    color: #292929;
+    background-color: transparent;
+    border-color: #292929;
+}
+
+
+/* button outline */
+
+.btn-outline {
+    padding: 10px 15px;
+    border-color: #464646;
+    border-top-color: transparent;
+    color: #464646;
+    font-weight: 400;
+    border-width: 1px 0;
+    position: relative;
+    letter-spacing: 4px;
+    text-transform: capitalize;
+    -webkit-transition: border .6s ease;
+    transition: border .6s ease;
+}
+
+.btn-outline:hover {
+    border-top-color: #464646;
+    background-color: transparent;
+    color: #464646;
+}
+
+.btn-outline:before,
+.btn-outline:after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 1px;
+    height: 10px;
+    background-color: #464646;
+}
+
+.btn-outline:after {
+    top: 0;
+    right: 0;
+    left: auto;
+    bottom: auto;
+    opacity: 0;
+    -webkit-transition: opacity .6s ease;
+    transition: opacity .6s ease;
+}
+
+.btn-outline:hover:after {
+    opacity: 1;
+}
+
+
+/* Glossy effect */
+
+.btn-glossy {
+    position: relative;
+    overflow: hidden;
+    -webkit-transition: none;
+    transition: none;
+}
+
+.btn-glossy:hover,
+.btn-glossy:focus {
+    background-color: transparent;
+}
+
+.btn-glossy:before {
+    content: "";
+    position: absolute;
+    width: 200%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-color: #03af60;
+    -webkit-transform: translate(-120%, 0) skew(-20deg);
+    -ms-transform: translate(-120%, 0) skew(-20deg);
+    transform: translate(-120%, 0) skew(-20deg);
+    -webkit-animation: outHover .5s ease 1 forwards;
+    animation: outHover .5s ease 1 forwards;
+}
+
+.btn-glossy:hover:before {
+    -webkit-animation-name: onHover;
+    animation-name: onHover;
+}
+
+.btn-glossy span {
+    position: relative;
+    display: inline-block;
+    letter-spacing: 1.2px;
+    color: currentColor;
+    -webkit-transition: color .5s ease;
+    transition: color .5s ease;
+}
+
+.btn-glossy:hover span {
+    color: #fff;
+}
+
+.btn-glossy.inverse {
+    border: 0;
+    padding: 19px 20px;
+}
+
+
+/* Size */
+
+.btn-glossy.inverse.btn-lg {
+    padding: 23px 35px;
+}
+
+.btn-glossy.inverse.btn-sm {
+    padding: 16px 20px;
+}
+
+.btn-glossy.inverse.btn-xs {
+    padding: 14px 20px;
+}
+
+.btn-glossy.inverse:hover,
+.btn-glossy.inverse:focus {
+    background-color: #03af60;
+}
+
+.btn-glossy.inverse:before {
+    background-color: #fff;
+}
+
+.btn-glossy.inverse span {
+    color: #fff;
+}
+
+.btn-glossy.inverse:hover span {
+    color: #03af60;
+}
+
+
+/* Lighter */
+
+.btn-glossy.btn-lighter:before {
+    background-color: #a99261;
+}
+
+.btn-glossy.btn-lighter:hover span {
+    color: #fff;
+}
+
+.btn-glossy.btn-lighter.inverse {
+    background-color: #a99261;
+}
+
+.btn-glossy.btn-lighter.inverse:before {
+    background-color: #fff;
+}
+
+.btn-glossy.btn-lighter.inverse span {
+    color: #fff;
+}
+
+.btn-glossy.btn-lighter.inverse:hover span {
+    color: #a99261;
+}
+
+
+/* White */
+
+.btn-glossy.btn-white:before {
+    background-color: #fff;
+}
+
+.btn-glossy.btn-white:hover span {
+    color: #333;
+}
+
+.btn-glossy.btn-white.inverse {
+    background-color: #fff;
+}
+
+.btn-glossy.btn-white.inverse:before {
+    background-color: #292929;
+}
+
+.btn-glossy.btn-white.inverse span {
+    color: #292929;
+}
+
+.btn-glossy.btn-white.inverse:hover span {
+    color: #fff;
+}
+
+
+/* Dark */
+
+.btn-glossy.btn-dark:before {
+    background-color: #292929;
+}
+
+.btn-glossy.btn-dark:hover span {
+    color: #03af60;
+}
+
+.btn-glossy.btn-dark.inverse {
+    background-color: #292929;
+}
+
+.btn-glossy.btn-dark.inverse:before {
+    background-color: white;
+}
+
+.btn-glossy.btn-dark.inverse span {
+    color: white;
+}
+
+.btn-glossy.btn-dark.inverse:hover span {
+    color: #292929;
+}
+
+/* Black */
+
+.btn-glossy.btn-black:before {
+    background-color: #000;
+}
+
+.btn-glossy.btn-black:hover span {
+    color: #03af60;
+}
+
+.btn-glossy.btn-black.inverse {
+    background-color: #000;
+}
+
+.btn-glossy.btn-black.inverse:before {
+    background-color: white;
+}
+
+.btn-glossy.btn-black.inverse span {
+    color: white;
+}
+
+.btn-glossy.btn-black.inverse:hover span {
+    color: #000;
+}
+
+@-webkit-keyframes onHover {
+    from {
+        -webkit-transform: translate(-120%, 0) skew(-20deg);
+        transform: translate(-120%, 0) skew(-20deg);
+    }
+
+    to {
+        -webkit-transform: translate(-25%, 0) skew(-20deg);
+        transform: translate(-25%, 0) skew(-20deg);
+    }
+}
+
+@keyframes onHover {
+    from {
+        -webkit-transform: translate(-120%, 0) skew(-20deg);
+        transform: translate(-120%, 0) skew(-20deg);
+    }
+
+    to {
+        -webkit-transform: translate(-25%, 0) skew(-20deg);
+        transform: translate(-25%, 0) skew(-20deg);
+    }
+}
+
+@-webkit-keyframes outHover {
+    from {
+        -webkit-transform: translate(-25%, 0) skew(-20deg);
+        transform: translate(-25%, 0) skew(-20deg);
+    }
+
+    to {
+        -webkit-transform: translate(70%, 0) skew(-20deg);
+        transform: translate(70%, 0) skew(-20deg);
+    }
+}
+
+@keyframes outHover {
+    from {
+        -webkit-transform: translate(-25%, 0) skew(-20deg);
+        transform: translate(-25%, 0) skew(-20deg);
+    }
+
+    to {
+        -webkit-transform: translate(70%, 0) skew(-20deg);
+        transform: translate(70%, 0) skew(-20deg);
+    }
+}
