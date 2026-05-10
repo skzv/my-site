@@ -1,0 +1,39 @@
+/* Shared card styles for Design System tab previews.
+   Each card is rendered ~700×<varies>px. Cards have minimal chrome —
+   the asset name renders OUTSIDE the card. */
+@import url('../colors_and_type.css');
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-weight: var(--weight-light);
+  overflow: hidden;
+}
+body {
+  padding: 24px;
+  box-sizing: border-box;
+}
+.card-grid { display: grid; gap: 16px; }
+.swatch {
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.swatch .chip { height: 64px; }
+.swatch .meta {
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.03);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+.swatch .name { color: var(--fg); }
+.swatch .hex { color: var(--fg-muted); font-family: var(--font-mono); }
+.label-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 11px; color: var(--fg-muted); letter-spacing: 0.06em;
+  text-transform: uppercase;
+}

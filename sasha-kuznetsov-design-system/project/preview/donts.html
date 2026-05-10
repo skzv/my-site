@@ -1,0 +1,26 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_shared.css"><style>
+body { padding: 22px; background: #000; }
+.list { display: grid; gap: 10px; }
+.rule {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 14px; border-radius: 6px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  font-family: 'Montserrat',sans-serif; font-weight: 300; font-size: 12px;
+  letter-spacing: 0.03em;
+}
+.rule .x { color: #ff6b6b; }
+.rule .y { color: #03af60; }
+.rule .lbl { color: rgba(255,255,255,0.85); }
+</style></head><body>
+<div class="list">
+  <div class="rule"><span class="x">✗</span><span class="lbl">No purple/blue gradients</span></div>
+  <div class="rule"><span class="x">✗</span><span class="lbl">No drop shadows on cards</span></div>
+  <div class="rule"><span class="x">✗</span><span class="lbl">No emoji decoration</span></div>
+  <div class="rule"><span class="x">✗</span><span class="lbl">No bold weights for hierarchy</span></div>
+  <div class="rule"><span class="x">✗</span><span class="lbl">No hand-drawn illustrations</span></div>
+  <div class="rule"><span class="y">✓</span><span class="lbl">Pure black + white + #03AF60</span></div>
+  <div class="rule"><span class="y">✓</span><span class="lbl">Montserrat 300, one weight only</span></div>
+  <div class="rule"><span class="y">✓</span><span class="lbl">Slow, quiet motion (500–600ms ease)</span></div>
+</div>
+</body></html>

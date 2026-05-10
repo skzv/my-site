@@ -1,0 +1,28 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_shared.css"><style>
+body { padding: 24px; background: #000; }
+.row { display: flex; flex-direction: column; gap: 14px; }
+.btn-shell {
+  position: relative; overflow: hidden;
+  display: inline-block; width: 360px;
+  padding: 19px 20px; border: 0; border-radius: 3px;
+  background: #000; color: #fff;
+  font-family: 'Montserrat', sans-serif; font-weight: 300;
+  font-size: 14px; letter-spacing: 0.08em; line-height: 1;
+  text-align: center;
+}
+.btn-shell .sweep {
+  position: absolute; inset: 0; width: 200%; height: 100%;
+  background: #fff; transform: translate(var(--x, -120%), 0) skew(-20deg);
+  transition: transform 500ms ease;
+}
+.btn-shell span { position: relative; transition: color 500ms ease; color: inherit; }
+.btn-shell.hover .sweep { --x: -25%; }
+.btn-shell.hover span { color: #03af60; }
+.lbl { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.55); }
+.pair { display: flex; flex-direction: column; gap: 8px; }
+</style></head><body>
+<div class="row">
+  <div class="pair"><div class="lbl">default</div><button class="btn-shell"><span class="sweep"></span><span>Get in touch</span></button></div>
+  <div class="pair"><div class="lbl">hover · the glossy sweep</div><button class="btn-shell hover"><span class="sweep"></span><span>Get in touch</span></button></div>
+</div>
+</body></html>

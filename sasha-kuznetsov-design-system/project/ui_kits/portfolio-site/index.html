@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sasha Kuznetsov — UI Kit</title>
+  <link rel="icon" href="../../assets/brand/favicon.png" />
+  <link rel="stylesheet" href="styles.css" />
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" data-presets="react" src="ParticleWave.jsx"></script>
+  <script type="text/babel" data-presets="react" src="GlossyButton.jsx"></script>
+  <script type="text/babel" data-presets="react" src="SocialRow.jsx"></script>
+  <script type="text/babel" data-presets="react" src="NameCard.jsx"></script>
+
+  <script type="text/babel" data-presets="react">
+    const { useState } = React;
+
+    function App() {
+      // Three "modes" — the site only has one, but exposing alternates makes
+      // this an honest UI kit (a click-thru recreation, not just a static
+      // recreation). The default mode is exactly what ships at skz.dev.
+      const [mode, setMode] = useState('default');
+
+      const ctas = {
+        default: [
+          { label: 'Get in touch',       href: 'mailto:me@skz.dev' },
+          { label: 'Check out my blog',  href: 'https://blog.skz.dev' },
+        ],
+        cv: [
+          { label: 'Download my CV',     href: '#' },
+          { label: 'Get in touch',       href: 'mailto:me@skz.dev' },
+          { label: 'Check out my blog',  href: 'https://blog.skz.dev' },
+        ],
+        resume: [
+          { label: 'See my resume',      href: 'https://resume.skz.dev' },
+          { label: 'Get in touch',       href: 'mailto:me@skz.dev' },
+        ],
+      }[mode];
+
+      return (
+        <React.Fragment>
+          <ParticleWave />
+          <NameCard name="Sasha Kuznetsov" ctas={ctas} />
+          <ModeSwitcher mode={mode} setMode={setMode} />
+        </React.Fragment>
+      );
+    }
+
+    // A tiny chrome control in the corner — purely for this UI kit demo.
+    // It is NOT part of the brand and would never ship to skz.dev.
+    function ModeSwitcher({ mode, setMode }) {
+      const opts = [
+        ['default', 'Default'],
+        ['cv',      'With CV'],
+        ['resume',  'With résumé'],
+      ];
+      const style = {
+        position: 'fixed', bottom: 16, left: 16, zIndex: 10,
+        display: 'flex', gap: 8, padding: 8,
+        background: 'rgba(0,0,0,0.6)', borderRadius: 8,
+        fontFamily: 'var(--font-sans)', fontSize: 12,
+        color: 'var(--fg-muted)',
+      };
+      const btn = (active) => ({
+        background: active ? 'var(--accent-green)' : 'transparent',
+        color: active ? '#000' : 'var(--fg)',
+        border: '1px solid ' + (active ? 'transparent' : 'rgba(255,255,255,0.2)'),
+        borderRadius: 4, padding: '6px 10px', cursor: 'pointer',
+        font: 'inherit', letterSpacing: '0.05em',
+      });
+      return (
+        <div style={style}>
+          <span style={{ alignSelf: 'center', paddingRight: 4 }}>kit demo:</span>
+          {opts.map(([v, l]) => (
+            <button key={v} style={btn(mode === v)} onClick={() => setMode(v)}>
+              {l}
+            </button>
+          ))}
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

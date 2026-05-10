@@ -1,0 +1,14 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_shared.css"><style>
+body { padding: 20px; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.swatch .chip { height: 90px; }
+.note { color: var(--fg-muted); font-size: 11px; margin-top: 14px; letter-spacing: 0.04em; }
+</style></head><body>
+<div class="row">
+  <div class="swatch"><div class="chip" style="background:#000000"></div><div class="meta"><div class="name">--color-black / --bg</div><div class="hex">#000000</div></div></div>
+  <div class="swatch"><div class="chip" style="background:#ffffff"></div><div class="meta"><div class="name">--color-white / --fg</div><div class="hex">#FFFFFF</div></div></div>
+  <div class="swatch"><div class="chip" style="background:linear-gradient(135deg,rgba(255,255,255,0.6) 0% 50%,rgba(255,255,255,0.6) 50% 100%),#000"></div><div class="meta"><div class="name">--surface-glass</div><div class="hex">rgba(255,255,255,0.60)</div></div></div>
+  <div class="swatch"><div class="chip" style="background:#03af60"></div><div class="meta"><div class="name">--accent-green</div><div class="hex">#03AF60</div></div></div>
+</div>
+<p class="note">Black + white + one green. The whole brand fits on four chips.</p>
+</body></html>

@@ -1,0 +1,204 @@
+/* =============================================================
+   Sasha Kuznetsov — Design System
+   colors_and_type.css
+
+   Source of truth for the brand's color & type tokens.
+   Pulled verbatim from skzv/my-site (css/main.css).
+   ============================================================= */
+
+/* Montserrat 300 is the ONLY weight loaded in production.
+   The system reserves heavier weights for hierarchy only when
+   needed (and asks for them explicitly). */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap');
+
+:root {
+  /* -----------------------------------------------------------
+     CORE COLORS
+     Site lives on pure black with a white particle field. The
+     name-card floats as a translucent white capsule over top.
+     ----------------------------------------------------------- */
+  --color-black:            #000000;   /* page background, "btn-black" inverse */
+  --color-white:            #ffffff;   /* particles, all text on dark */
+  --color-dark:             #292929;   /* "btn-dark" / btn-black hover bg */
+  --color-outline:          #464646;   /* btn-outline color & rule */
+
+  /* Translucent surfaces — used for the name-card glass effect */
+  --surface-glass:          rgba(255, 255, 255, 0.60);
+  --surface-glass-strong:   rgba(255, 255, 255, 0.85);
+
+  /* -----------------------------------------------------------
+     ACCENTS
+     Spring green is the single brand accent (`#03af60`).
+     It appears as button text on dark, as button hover fill on
+     light, and as the glossy sweep on every glossy button.
+     ----------------------------------------------------------- */
+  --accent-green:           #03af60;   /* PRIMARY ACCENT — verbatim */
+  --accent-green-hover:     #02935a;   /* slightly darker for press */
+  --accent-tan:             #a99261;   /* "btn-lighter" — secondary, rarely used */
+  --accent-link-yellow:     #ffff00;   /* legacy <a> color (only inside markdown/blog body copy) */
+
+  /* -----------------------------------------------------------
+     SEMANTIC ALIASES
+     The site has NO dark-mode toggle: dark is the default and
+     only mode. So fg/bg map directly to white-on-black.
+     ----------------------------------------------------------- */
+  --bg:                     var(--color-black);
+  --bg-elevated:            var(--surface-glass);
+  --fg:                     var(--color-white);
+  --fg-on-glass:            var(--color-black);    /* text inside name-card */
+  --fg-muted:               rgba(255, 255, 255, 0.65);
+  --fg-muted-on-glass:      rgba(0, 0, 0, 0.6);
+
+  --border-subtle:          rgba(255, 255, 255, 0.12);
+  --border-strong:          var(--color-outline);
+
+  /* -----------------------------------------------------------
+     TYPE
+     One family, one weight. Hierarchy is achieved with size and
+     letter-spacing — never weight changes.
+     ----------------------------------------------------------- */
+  --font-sans:              'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono:              ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --weight-light:           300;       /* default — used everywhere */
+  --weight-regular:         400;       /* body copy on blog only */
+  --weight-medium:          500;       /* reserved */
+
+  /* Type scale — small. The site is essentially one hero. */
+  --fs-xs:                  12px;
+  --fs-sm:                  13px;       /* body baseline (from main.css) */
+  --fs-base:                14px;       /* button text */
+  --fs-md:                  16px;
+  --fs-lg:                  20px;
+  --fs-xl:                  28px;
+  --fs-h2:                  36px;
+  --fs-h1:                  56px;       /* "Sasha Kuznetsov" name */
+
+  --lh-tight:               1.1;
+  --lh-snug:                1.3;
+  --lh-base:                1.85;       /* 24/13 from main.css */
+  --lh-loose:               2;
+
+  --tracking-tight:         -0.01em;
+  --tracking-normal:        0;
+  --tracking-wide:          0.08em;     /* button labels (1.2px on 14px) */
+  --tracking-widest:        0.25em;     /* btn-lg / btn-outline */
+
+  /* -----------------------------------------------------------
+     SPACING — simple 4px grid extracted from observed values
+     Card padding (30), button margin (30), btn pad (22/35),
+     social icon (40), card radius (25), button radius (3).
+     ----------------------------------------------------------- */
+  --space-0:                0;
+  --space-1:                4px;
+  --space-2:                8px;
+  --space-3:                12px;
+  --space-4:                16px;
+  --space-5:                20px;
+  --space-6:                24px;
+  --space-7:                30px;       /* name-card padding, button margin */
+  --space-8:                40px;       /* social icon size */
+  --space-10:               60px;
+  --space-12:               80px;
+
+  /* -----------------------------------------------------------
+     RADII
+     The hero capsule is a soft 25px; buttons are nearly sharp.
+     ----------------------------------------------------------- */
+  --radius-sharp:           0;
+  --radius-button:          3px;
+  --radius-card:            25px;        /* name-card */
+  --radius-pill:            999px;
+
+  /* -----------------------------------------------------------
+     ELEVATION
+     The site uses no shadows in production — depth comes from
+     the WebGL particle field behind the card. These are
+     reserved for future surfaces.
+     ----------------------------------------------------------- */
+  --shadow-none:            none;
+  --shadow-card:            0 8px 32px rgba(0, 0, 0, 0.25);
+  --shadow-glow:            0 0 24px rgba(3, 175, 96, 0.35);
+
+  /* -----------------------------------------------------------
+     MOTION
+     One transition curve, two speeds. Hover transitions are
+     long (.6s) — deliberate, never snappy. The glossy sweep is
+     .5s ease.
+     ----------------------------------------------------------- */
+  --ease-default:           ease;
+  --ease-out:               cubic-bezier(0.2, 0.6, 0.2, 1);
+  --dur-fast:               200ms;
+  --dur-base:               500ms;       /* btn-glossy sweep */
+  --dur-slow:               600ms;       /* btn color/bg transitions */
+}
+
+/* =============================================================
+   SEMANTIC TYPE
+   Use these classes (or the underlying selectors) directly.
+   ============================================================= */
+html, body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-weight: var(--weight-light);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-base);
+  letter-spacing: var(--tracking-normal);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, .sk-h1 {
+  font-family: var(--font-sans);
+  font-weight: var(--weight-light);
+  font-size: var(--fs-h1);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-normal);
+  margin: 0;
+}
+
+h2, .sk-h2 {
+  font-family: var(--font-sans);
+  font-weight: var(--weight-light);
+  font-size: var(--fs-h2);
+  line-height: var(--lh-snug);
+  margin: 0;
+}
+
+h3, .sk-h3 {
+  font-family: var(--font-sans);
+  font-weight: var(--weight-light);
+  font-size: var(--fs-xl);
+  line-height: var(--lh-snug);
+  margin: 0;
+}
+
+p, .sk-body {
+  font-family: var(--font-sans);
+  font-weight: var(--weight-light);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-base);
+}
+
+.sk-eyebrow {
+  font-family: var(--font-sans);
+  font-weight: var(--weight-light);
+  font-size: var(--fs-xs);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+}
+
+.sk-button-label {
+  font-family: var(--font-sans);
+  font-weight: var(--weight-light);
+  font-size: var(--fs-base);
+  letter-spacing: var(--tracking-wide);
+  line-height: 1;
+}
+
+code, pre, .sk-mono {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+}

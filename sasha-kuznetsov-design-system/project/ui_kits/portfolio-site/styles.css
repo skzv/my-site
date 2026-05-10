@@ -1,0 +1,137 @@
+/* Shared styles for the portfolio-site UI kit demo. */
+@import url('../../colors_and_type.css');
+
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  overflow: hidden;
+  font-family: var(--font-sans);
+  font-weight: var(--weight-light);
+}
+
+/* ----- ParticleWave canvas ----- */
+.sk-particle-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: var(--bg);
+}
+
+/* ----- NameCard ----- */
+.sk-namecard {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  background: var(--surface-glass);
+  border-radius: var(--radius-card);
+  padding: 0;
+  z-index: 2;
+  min-width: 360px;
+  max-width: min(420px, calc(100vw - 32px));
+}
+.sk-namecard h1 {
+  font-size: 32px;
+  font-weight: var(--weight-light);
+  color: var(--fg-on-glass);
+  margin: 30px 30px 0 30px;
+  letter-spacing: var(--tracking-normal);
+  line-height: var(--lh-tight);
+}
+.sk-namecard .sk-button-stack {
+  text-align: center;
+  margin-top: 0;
+}
+
+/* ----- GlossyButton ----- */
+.sk-btn {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  width: 300px;
+  padding: 19px 20px;
+  border: 0;
+  border-radius: var(--radius-button);
+  background: var(--color-black);
+  color: var(--color-white);
+  font-family: var(--font-sans);
+  font-weight: var(--weight-light);
+  font-size: var(--fs-base);
+  letter-spacing: var(--tracking-wide);
+  line-height: 1;
+  cursor: pointer;
+  margin: 30px 30px 0 30px;
+  transition: background-color var(--dur-slow) var(--ease-default),
+              color var(--dur-slow) var(--ease-default);
+  -webkit-tap-highlight-color: transparent;
+}
+.sk-btn:focus, .sk-btn:active { outline: 0; box-shadow: none; }
+.sk-btn:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 200%;
+  height: 100%;
+  background: var(--color-white);
+  transform: translate(-120%, 0) skew(-20deg);
+  animation: sk-out var(--dur-base) var(--ease-default) 1 forwards;
+}
+.sk-btn:hover:before { animation-name: sk-in; }
+.sk-btn span {
+  position: relative;
+  display: inline-block;
+  color: currentColor;
+  transition: color var(--dur-base) var(--ease-default);
+}
+.sk-btn:hover span { color: var(--color-black); }
+
+/* Variant: green accent on black (used on btn-glossy.btn-black.inverse) */
+.sk-btn--green-on-black:hover span { color: var(--accent-green); }
+.sk-btn--green-on-black:before { background: var(--color-white); }
+
+/* Variant: outline / link-style */
+.sk-btn--ghost {
+  background: transparent;
+  color: var(--color-white);
+  border: 1px solid var(--color-white);
+}
+.sk-btn--ghost:before { background: var(--color-white); }
+.sk-btn--ghost:hover span { color: var(--color-black); }
+
+@keyframes sk-in {
+  from { transform: translate(-120%, 0) skew(-20deg); }
+  to   { transform: translate(-25%, 0) skew(-20deg); }
+}
+@keyframes sk-out {
+  from { transform: translate(-25%, 0) skew(-20deg); }
+  to   { transform: translate(70%, 0) skew(-20deg); }
+}
+
+/* ----- SocialRow ----- */
+.sk-social {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+.sk-social a {
+  display: block;
+  margin: 30px 0;
+}
+.sk-social a:first-child { margin-left: 30px; }
+.sk-social a:last-child { margin-right: 30px; }
+.sk-social img {
+  width: 40px;
+  height: 40px;
+  display: block;
+  transition: transform 200ms var(--ease-default);
+}
+.sk-social a:hover img { transform: scale(1.5); }
+
+@media (max-width: 400px) {
+  .sk-btn { width: 250px; }
+}
