@@ -1,3 +1,4 @@
+{% if jekyll.environment == "production" %}
 <script async defer src="https://api.skz.dev/latest.js"></script>
 <noscript><img src="https://api.skz.dev/noscript.gif" alt="" referrerpolicy="no-referrer-when-downgrade" /></noscript>
 <script async defer data-domain="skz.dev" src="https://plausible.io/js/plausible.js"></script>
@@ -11,3 +12,4 @@
 
   gtag('config', 'G-V50947ELS3');
 </script>
+{% endif %}
