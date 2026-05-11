@@ -1,5 +1,13 @@
 # Site Settings
-url:                https://skz.dev # main url
+url:                https://skz.dev
+title:              Sasha Kuznetsov
+description:        "Software engineer, physicist, and hacker."
+author:
+  name:             Sasha Kuznetsov
+  twitter:          _skzv
+twitter:
+  username:         _skzv
+  card:             summary_large_image
 
 # Other Settings
 plugins:
@@ -13,3 +21,4 @@ defaults:
   -
     values:
       layout:       "compress"
+      image:        https://skz.dev/assets/img/preview-banner.png
