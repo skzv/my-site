@@ -3,5 +3,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=5.0">
 <link type="text/css" rel="stylesheet" href="/css/main.css">
+
+{% comment %}
+  Explicit Open Graph block. jekyll-seo-tag already emits most of these,
+  but LinkedIn's Post Inspector flags og:image, og:url, and og:type as
+  "should be explicitly provided." Declaring them again here costs
+  nothing and silences the linter.
+{% endcomment %}
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ site.url }}{{ page.url }}">
+<meta property="og:image" content="{{ site.url }}/assets/img/preview-banner.png">
 <meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="600">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Sasha Kuznetsov. λ calibration card.">
