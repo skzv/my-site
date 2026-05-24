@@ -443,6 +443,9 @@ canvas { display: block; }
 	color: rgba(255,255,255,0.92);
 	letter-spacing: 0.005em;
 }
+.about-body + .about-body {
+	margin-top: 18px;
+}
 .about-body a {
 	color: var(--ink);
 	border-bottom: 1px solid var(--hair);
@@ -452,31 +455,11 @@ canvas { display: block; }
 	border-bottom-color: var(--ink);
 	outline: none;
 }
-.about-rule {
-	width: 36px;
-	height: 1px;
-	background: var(--ink-dim);
-	margin: 28px 0 22px;
-}
-.about-contact {
-	font-family: var(--mono);
-	font-size: 12px;
-	letter-spacing: 0.06em;
-	color: var(--ink-dim);
-}
-.about-contact a {
-	color: var(--ink);
-	border-bottom: 1px solid var(--hair);
-	transition: border-color 240ms ease;
-}
-.about-contact a:hover, .about-contact a:focus-visible {
-	border-bottom-color: var(--ink);
-}
 .back-top {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
-	margin-top: 36px;
+	margin-top: 32px;
 	font-family: var(--mono);
 	font-size: 11px;
 	letter-spacing: 0.24em;
@@ -492,7 +475,6 @@ canvas { display: block; }
 	.scroll-cue { bottom: 60px; }
 	.about { padding: 96px 24px 72px; }
 	.about-inner { padding: 28px 26px 32px; }
-	.about-rule { margin: 22px 0 18px; }
 }
 @media (prefers-reduced-motion: reduce) {
 	.scroll-cue { animation: none !important; opacity: 1 !important; }
