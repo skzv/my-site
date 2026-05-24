@@ -26,9 +26,10 @@ html, body {
 	font-weight: 300;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	height: 100%;
-	overflow: hidden;
+	min-height: 100%;
 }
+html { scroll-behavior: smooth; }
+body { overflow-x: hidden; }
 
 a { color: inherit; text-decoration: none; }
 canvas { display: block; }
@@ -76,9 +77,17 @@ canvas { display: block; }
 	background-size: 220px 220px;
 }
 
+/* --- Hero wrapper (full first viewport) --------------------------- */
+.hero {
+	position: relative;
+	min-height: 100vh;
+	min-height: 100svh;
+	width: 100%;
+}
+
 /* --- Corner fiducial registration marks --------------------------- */
 .fiducial {
-	position: fixed;
+	position: absolute;
 	z-index: 4;
 	width: 22px;
 	height: 22px;
@@ -93,7 +102,7 @@ canvas { display: block; }
 
 /* --- Corner instrument bars --------------------------------------- */
 .bar {
-	position: fixed;
+	position: absolute;
 	left: var(--gutter);
 	right: var(--gutter);
 	z-index: 4;
@@ -129,7 +138,7 @@ canvas { display: block; }
 
 /* --- Center stack -------------------------------------------------- */
 .stack {
-	position: fixed;
+	position: absolute;
 	inset: 0;
 	z-index: 3;
 	display: flex;
@@ -350,4 +359,141 @@ canvas { display: block; }
 	.stack { gap: 16px; }
 	.mark .lam { font-size: 124px; }
 	.social { margin-top: 14px; }
+}
+
+/* --- Scroll cue --------------------------------------------------- */
+.scroll-cue {
+	position: absolute;
+	bottom: 76px;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 5;
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	color: var(--ink-dim);
+	opacity: 0;
+	animation:
+		fadeIn 800ms ease-out 1000ms forwards,
+		cue-bob 2.2s ease-in-out 1.6s infinite;
+	transition: opacity 280ms ease;
+}
+.scroll-cue.cue-hide { opacity: 0 !important; pointer-events: none; }
+.scroll-cue:hover { color: var(--ink); }
+.scroll-cue .cue-label {
+	font-family: var(--mono);
+	font-size: 10px;
+	font-weight: 400;
+	letter-spacing: 0.32em;
+	text-transform: uppercase;
+}
+@keyframes cue-bob {
+	0%, 100% { transform: translate(-50%, 0); }
+	50%      { transform: translate(-50%, 5px); }
+}
+
+/* --- About panel -------------------------------------------------- */
+.about {
+	position: relative;
+	z-index: 3;
+	min-height: 100vh;
+	min-height: 100svh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 120px var(--gutter) 80px;
+}
+.about-inner {
+	width: 100%;
+	max-width: 640px;
+	text-align: left;
+	padding: 38px 44px 42px;
+	border-radius: 8px;
+	background: rgba(8,8,10,0.42);
+	backdrop-filter: blur(28px) saturate(125%);
+	-webkit-backdrop-filter: blur(28px) saturate(125%);
+	border: 1px solid rgba(255,255,255,0.08);
+	box-shadow:
+		0 1px 0 rgba(255,255,255,0.06) inset,
+		0 24px 80px rgba(0,0,0,0.5);
+}
+.about-kicker {
+	font-family: var(--mono);
+	font-size: 11px;
+	letter-spacing: 0.32em;
+	text-transform: uppercase;
+	color: var(--ink-dim);
+	margin-bottom: 14px;
+}
+.about-title {
+	font-family: var(--sans);
+	font-weight: 200;
+	font-size: clamp(26px, 3.6vw, 38px);
+	letter-spacing: -0.005em;
+	line-height: 1.15;
+	color: var(--ink);
+	margin-bottom: 22px;
+}
+.about-body {
+	font-family: var(--serif);
+	font-weight: 400;
+	font-size: clamp(16px, 1.5vw, 19px);
+	line-height: 1.65;
+	color: rgba(255,255,255,0.92);
+	letter-spacing: 0.005em;
+}
+.about-body a {
+	color: var(--ink);
+	border-bottom: 1px solid var(--hair);
+	transition: border-color 240ms ease;
+}
+.about-body a:hover, .about-body a:focus-visible {
+	border-bottom-color: var(--ink);
+	outline: none;
+}
+.about-rule {
+	width: 36px;
+	height: 1px;
+	background: var(--ink-dim);
+	margin: 28px 0 22px;
+}
+.about-contact {
+	font-family: var(--mono);
+	font-size: 12px;
+	letter-spacing: 0.06em;
+	color: var(--ink-dim);
+}
+.about-contact a {
+	color: var(--ink);
+	border-bottom: 1px solid var(--hair);
+	transition: border-color 240ms ease;
+}
+.about-contact a:hover, .about-contact a:focus-visible {
+	border-bottom-color: var(--ink);
+}
+.back-top {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 36px;
+	font-family: var(--mono);
+	font-size: 11px;
+	letter-spacing: 0.24em;
+	text-transform: uppercase;
+	color: var(--ink-dim);
+	transition: color 240ms ease;
+}
+.back-top:hover, .back-top:focus-visible {
+	color: var(--ink);
+	outline: none;
+}
+@media (max-width: 720px) {
+	.scroll-cue { bottom: 60px; }
+	.about { padding: 96px 24px 72px; }
+	.about-inner { padding: 28px 26px 32px; }
+	.about-rule { margin: 22px 0 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.scroll-cue { animation: none !important; opacity: 1 !important; }
 }

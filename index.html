@@ -13,6 +13,8 @@
 
 <body>
 
+	<section class="hero">
+
 	<svg class="fiducial tl" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 10 V2 H10" fill="none" stroke="currentColor" stroke-width="1.25"/></svg>
 	<svg class="fiducial tr" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2 H22 V10" fill="none" stroke="currentColor" stroke-width="1.25"/></svg>
 	<svg class="fiducial bl" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 14 V22 H10" fill="none" stroke="currentColor" stroke-width="1.25"/></svg>
@@ -64,8 +66,66 @@
 		<span class="bar-r serial">Fig. <em>λ</em> — Calibration Card</span>
 	</div>
 
+	<a class="scroll-cue" href="#about" aria-label="Scroll for more">
+		<span class="cue-label">More</span>
+		<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+			<path d="M6 9 L12 15 L18 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+		</svg>
+	</a>
+
+	</section><!-- /.hero -->
+
+	<section class="about" id="about" aria-labelledby="about-h">
+		<div class="about-inner">
+			<div class="about-kicker">— About —</div>
+			<h2 id="about-h" class="about-title">A short note</h2>
+			<p class="about-body">
+				I build software for a living and study physics for the love of it.
+				Most of what I make is small, careful, and deliberately personal —
+				quantitative tools, machine-learning experiments, the occasional
+				robot. Long-form notes live at <a href="https://blog.skz.dev">blog.skz.dev</a>;
+				finished things at <a href="https://directory.skz.dev">directory.skz.dev</a>.
+			</p>
+			<div class="about-rule"></div>
+			<p class="about-contact">
+				Reach me at <a href="mailto:me@skz.dev">me@skz.dev</a> — I read everything.
+			</p>
+			<a class="back-top" href="#top" aria-label="Back to top">
+				<svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">
+					<path d="M6 15 L12 9 L18 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+				<span>Back to top</span>
+			</a>
+		</div>
+	</section>
+
 	<div class="grain" aria-hidden="true"></div>
 	<div class="vignette" aria-hidden="true"></div>
+
+	<script>
+		// Scroll cue: fade after the user has scrolled past the first ~120px.
+		(function () {
+			var cue = document.querySelector('.scroll-cue');
+			if (!cue) return;
+			var hide = function () {
+				if (window.scrollY > 120) cue.classList.add('cue-hide');
+				else cue.classList.remove('cue-hide');
+			};
+			window.addEventListener('scroll', hide, { passive: true });
+			hide();
+
+			// Anchor smooth-scroll (in case CSS scroll-behavior is overridden).
+			document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+				a.addEventListener('click', function (e) {
+					var id = a.getAttribute('href').slice(1);
+					var target = id ? document.getElementById(id) : document.body;
+					if (!target && id !== 'top') return;
+					e.preventDefault();
+					(target || document.body).scrollIntoView({ behavior: 'smooth', block: 'start' });
+				});
+			});
+		}());
+	</script>
 
 
     <script type="x-shader/x-vertex" id="vertexshader">
