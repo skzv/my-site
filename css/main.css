@@ -143,35 +143,25 @@ canvas { display: block; }
 
 /* --- λ mark in a circle ------------------------------------------- */
 .mark {
-	width: 128px;
-	height: 128px;
-	border: 2px solid var(--ink);
-	border-radius: 999px;
 	display: grid;
 	place-items: center;
 	position: relative;
+	padding-bottom: 4px;
 	opacity: 0;
 	transform: translateY(8px);
-	animation:
-		rise 700ms cubic-bezier(.2,.7,.2,1) 200ms forwards,
-		breath 7s ease-in-out 1.4s infinite;
-}
-.mark::before {
-	content: "";
-	position: absolute;
-	inset: 5px;
-	border-radius: 999px;
-	border: 1px solid var(--hair);
+	animation: rise 700ms cubic-bezier(.2,.7,.2,1) 200ms forwards;
 }
 .mark .lam {
 	font-family: var(--serif);
 	font-style: italic;
 	font-weight: 400;
-	font-size: 92px;
+	font-size: 156px;
 	line-height: 1;
 	color: var(--ink);
-	transform: translate(-2px, 3px);
-	text-shadow: 0 0 24px rgba(255,255,255,0.18);
+	text-shadow:
+		0 0 28px rgba(255,255,255,0.22),
+		0 2px 30px rgba(0,0,0,0.55);
+	animation: breath 7s ease-in-out 1.4s infinite;
 }
 
 /* --- Frosted-glass identity card ---------------------------------- */
@@ -329,8 +319,8 @@ canvas { display: block; }
 	to { opacity: 1; transform: translateY(0); }
 }
 @keyframes breath {
-	0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
-	50%      { box-shadow: 0 0 36px 0 rgba(255,255,255,0.06); }
+	0%, 100% { text-shadow: 0 0 24px rgba(255,255,255,0.18), 0 2px 30px rgba(0,0,0,0.55); }
+	50%      { text-shadow: 0 0 38px rgba(255,255,255,0.30), 0 2px 30px rgba(0,0,0,0.55); }
 }
 @media (prefers-reduced-motion: reduce) {
 	.bar, .mark, .glass, .link, .links .sep, .social, .fiducial {
@@ -344,8 +334,7 @@ canvas { display: block; }
 /* --- Responsive --------------------------------------------------- */
 @media (max-width: 720px) {
 	.stack { gap: 18px; }
-	.mark { width: 108px; height: 108px; }
-	.mark .lam { font-size: 78px; }
+	.mark .lam { font-size: 124px; }
 	.glass { padding: 18px 28px 22px; }
 	.links { flex-direction: column; gap: 8px; }
 	.links .sep { display: none; }
@@ -359,7 +348,6 @@ canvas { display: block; }
 }
 @media (max-height: 720px) {
 	.stack { gap: 16px; }
-	.mark { width: 108px; height: 108px; }
-	.mark .lam { font-size: 78px; }
+	.mark .lam { font-size: 124px; }
 	.social { margin-top: 14px; }
 }
