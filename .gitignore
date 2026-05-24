@@ -4,4 +4,6 @@ _site/
 .jekyll-metadata
 .playwright-mcp/
 _og.html
+_favicon.html
+favicon-preview.png
 redesign-*.png
