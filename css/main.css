@@ -40,6 +40,7 @@ canvas { display: block; }
 	inset: 0;
 	z-index: 0;
 }
+.wave { pointer-events: none; }
 .wave canvas { width: 100%; height: 100%; }
 
 /* --- Soft center-pull vignette (light — wave is the hero) ---------- */
@@ -332,6 +333,7 @@ canvas { display: block; }
 	50%      { text-shadow: 0 0 38px rgba(255,255,255,0.30), 0 2px 30px rgba(0,0,0,0.55); }
 }
 @media (prefers-reduced-motion: reduce) {
+	html { scroll-behavior: auto; }
 	.bar, .mark, .glass, .link, .links .sep, .social, .fiducial {
 		opacity: 1 !important;
 		transform: none !important;
