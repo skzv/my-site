@@ -1,7 +1,8 @@
 # Site Settings
 url:                https://skz.dev
 title:              Sasha Kuznetsov
-description:        "Senior AI research software engineer at Google. Engineering physicist by training. Notes on math, physics, ML, quantitative finance, robotics, and more."
+tagline:            AI Research Software Engineer & Physicist
+description:        "Sasha Kuznetsov is a senior AI research software engineer at Google and an engineering physicist. Explore his background, writing, and projects."
 author:
   name:             Sasha Kuznetsov
   twitter:          _skzv
@@ -16,9 +17,17 @@ plugins:
 
 exclude:
   - sasha-kuznetsov-design-system
+  - CLAUDE.md
+  - README.md
+  - LICENSE
+  - script
 
 defaults:
   -
     values:
       layout:       "compress"
-      image:        https://skz.dev/assets/img/preview-banner.png
+      image:
+        path:       /assets/img/preview-banner.png
+        width:      1200
+        height:     630
+        alt:        "Sasha Kuznetsov. λ calibration card."

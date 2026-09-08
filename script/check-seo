@@ -1,0 +1,41 @@
+#!/usr/bin/env ruby
+require 'nokogiri'
+require 'json'
+require 'open3'
+
+root = ARGV.fetch(0, '_site')
+html = File.read(File.join(root, 'index.html'))
+doc = Nokogiri::HTML(html)
+def check(value, message)
+  abort message unless value
+end
+check(doc.css('title').size == 1, 'Expected one title')
+check(doc.at_css('title').text == 'Sasha Kuznetsov | AI Research Software Engineer & Physicist', 'Unexpected title')
+%w[description og:title og:description og:url og:type og:image og:image:width og:image:height og:image:alt twitter:card twitter:image twitter:image:alt].each do |key|
+  nodes = doc.css("meta[name='#{key}'], meta[property='#{key}']")
+  check(nodes.size == 1 && !nodes.first['content'].empty?, "Missing or duplicate #{key}")
+end
+check(doc.css('link[rel=canonical]').size == 1 && doc.at_css('link[rel=canonical]')['href'] == 'https://skz.dev/', 'Invalid canonical')
+check(doc.css('main').size == 1 && doc.css('main h1').size == 1 && doc.css('main #about').size == 1, 'Invalid landmarks')
+check(doc.css('meta[name=robots]').none? { |n| n['content'].include?('noindex') }, 'Unexpected noindex')
+scripts = doc.css('script[type="application/ld+json"]')
+check(scripts.size == 1, 'Expected one structured-data graph')
+graph = JSON.parse(scripts.first.text).fetch('@graph')
+person = graph.find { |n| n['@type'] == 'Person' }
+website = graph.find { |n| n['@type'] == 'WebSite' }
+check(person && website && website.fetch('author')['@id'] == person['@id'], 'Disconnected identity graph')
+check(person.fetch('sameAs').all? { |url| doc.css('a').any? { |a| a['href'] == url } }, 'Schema profiles must match visible links')
+check(html.index('<meta charset=') < 1024, 'Charset must appear early')
+check(File.exist?(File.join(root, 'assets/img/preview-banner.png')), 'Missing preview')
+xml = Nokogiri::XML(File.read(File.join(root, 'sitemap.xml'))) { |config| config.strict }
+check(xml.xpath('//*[local-name()="loc"]').map(&:text) == ['https://skz.dev/'], 'Unexpected sitemap URLs')
+check(File.read(File.join(root, 'robots.txt')).include?('Sitemap: https://skz.dev/sitemap.xml'), 'Missing sitemap declaration')
+%w[CLAUDE.md README.md LICENSE script sasha-kuznetsov-design-system].each do |path|
+  check(!File.exist?(File.join(root, path)), "Development file published: #{path}")
+end
+doc.css('script:not([src])').each do |script|
+  next unless [nil, 'module', 'text/javascript'].include?(script['type'])
+  _, error, status = Open3.capture3('node', '--check', '--input-type=module', stdin_data: script.text)
+  check(status.success?, "Invalid generated JavaScript: #{error}")
+end
+puts 'SEO and generated JavaScript checks passed'

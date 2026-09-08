@@ -1,0 +1,31 @@
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "{{ site.url }}/#website",
+      "url": {{ site.url | append: '/' | jsonify }},
+      "name": {{ site.title | jsonify }},
+      "description": {{ site.description | jsonify }},
+      "author": { "@id": "{{ site.url }}/#person" },
+      "about": { "@id": "{{ site.url }}/#person" }
+    },
+    {
+      "@type": "Person",
+      "@id": "{{ site.url }}/#person",
+      "name": {{ site.author.name | jsonify }},
+      "url": {{ site.url | append: '/' | jsonify }},
+      "description": {{ site.description | jsonify }},
+      "jobTitle": "Senior AI research software engineer",
+      "worksFor": { "@type": "Organization", "name": "Google" },
+      "sameAs": [
+        "https://www.linkedin.com/in/skzv",
+        "https://github.com/skzv",
+        "https://twitter.com/_skzv",
+        "https://instagram.com/_skzv7"
+      ]
+    }
+  ]
+}
+</script>

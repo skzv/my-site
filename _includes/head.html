@@ -1,18 +1,15 @@
-{% seo %}
-<link rel="icon" href="/assets/img/favicon.png">
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=5.0">
-<link type="text/css" rel="stylesheet" href="/css/main.css">
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
 {% comment %}
-  Explicit Open Graph block. jekyll-seo-tag already emits most of these,
-  but LinkedIn's Post Inspector flags og:image, og:url, and og:type as
-  "should be explicitly provided." Declaring them again here costs
-  nothing and silences the linter.
+  Keep the plugin's metadata, replacing its anonymous JSON-LD author with
+  one connected WebSite/Person graph. The production SEO check verifies this boundary.
 {% endcomment %}
+{% capture seo_output %}{% seo %}{% endcapture %}
+{{ seo_output | split: '<script type="application/ld+json">' | first }}
+<!-- End Jekyll SEO metadata -->
+<link rel="icon" href="/assets/img/favicon.png">
+<link type="text/css" rel="stylesheet" href="/css/main.css">
 <meta property="og:type" content="website">
-<meta property="og:url" content="{{ site.url }}{{ page.url }}">
-<meta property="og:image" content="{{ site.url }}/assets/img/preview-banner.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Sasha Kuznetsov. λ calibration card.">
+<meta property="og:image:alt" content="{{ page.image.alt | escape }}">
+<meta name="twitter:image:alt" content="{{ page.image.alt | escape }}">
+{% include structured-data.html %}
