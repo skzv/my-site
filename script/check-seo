@@ -38,4 +38,27 @@ doc.css('script:not([src])').each do |script|
   _, error, status = Open3.capture3('node', '--check', '--input-type=module', stdin_data: script.text)
   check(status.success?, "Invalid generated JavaScript: #{error}")
 end
+# Red mode (/red/): same content as the home page, so the home page stays canonical,
+# but a link to it carries its own preview card.
+red = Nokogiri::HTML(File.read(File.join(root, 'red/index.html')))
+check(red.css('title').size == 1 && red.at_css('title').text.start_with?('Sasha Kuznetsov'), 'Red: unexpected title')
+%w[description og:title og:description og:url og:type og:image og:image:width og:image:height og:image:alt twitter:card twitter:title twitter:description twitter:image twitter:image:alt].each do |key|
+  nodes = red.css("meta[name='#{key}'], meta[property='#{key}']")
+  check(nodes.size == 1 && !nodes.first['content'].empty?, "Red: missing or duplicate #{key}")
+end
+check(red.css('link[rel=canonical]').size == 1 && red.at_css('link[rel=canonical]')['href'] == 'https://skz.dev/', 'Red: canonical must be the home page')
+check(red.at_css("meta[property='og:url']")['content'] == 'https://skz.dev/red/', 'Red: og:url must be the red page')
+check(red.at_css("meta[name='description']")['content'].length >= 100, 'Red: description too short for LinkedIn')
+check(red.css('meta[name=robots]').none? { |n| n['content'].include?('noindex') }, 'Red: unexpected noindex')
+check(red.css('main').size == 1 && red.css('main h1').size == 1 && red.css('main #about').size == 1, 'Red: invalid landmarks')
+red_image = red.at_css("meta[property='og:image']")['content']
+check(red_image == red.at_css("meta[name='twitter:image']")['content'], 'Red: og:image and twitter:image differ')
+check(red_image.start_with?('https://skz.dev/'), 'Red: preview image must be an absolute skz.dev URL')
+red_image_path = File.join(root, red_image.delete_prefix('https://skz.dev/'))
+check(File.exist?(red_image_path), 'Red: missing preview image')
+check(File.binread(red_image_path, 8, 16).unpack('N2') == [1200, 630], 'Red: preview image must be 1200x630')
+red_graph = JSON.parse(red.at_css('script[type="application/ld+json"]').text)
+check(red_graph['@type'] == 'WebPage' && red_graph.dig('isPartOf', '@id') == website['@id'] && red_graph.dig('about', '@id') == person['@id'], 'Red: page is not connected to the identity graph')
+check(person.fetch('sameAs').all? { |url| red.css('a').any? { |link| link['href'] == url } }, 'Red: profile links must match the home page')
+
 puts 'SEO and generated JavaScript checks passed'
