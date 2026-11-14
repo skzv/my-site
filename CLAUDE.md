@@ -42,3 +42,11 @@ After a push, the CDN can serve stale HTML for a minute or two. Bust with a quer
 `sasha-kuznetsov-design-system/` is a vendored handoff bundle from [claude.ai/design](https://claude.ai/design) — a design system *distilled from this very repo* (tokens, voice/visual guidelines, React UI kit recreation, preview cards). It is **excluded from the Jekyll build** via `exclude:` in `_config.yml`. Read it for brand intent (especially `README.md` and `colors_and_type.css`), but the production code is the source of truth — the bundle is reference material, not a dependency.
 
 The bundle contains a nested `_config.yml` under `project/_source/` (a snapshot of this repo). The CI workflow handles this fine because it uses `bundle exec jekyll build` which reads the root config. Don't introduce a tool that auto-discovers `_config.yml` files without scoping it.
+
+## Red mode (`/red/`)
+
+`red/` is a second rendering of the same page: everything on screen is drawn as 1-bit red dots on one canvas. It is an easter egg, reached by clicking the hero λ (which links to `/red/`; the λ there links back to `/`) or by direct link, https://skz.dev/red/.
+
+- Self-contained: `red/index.html`, `red/css/main.css`, `red/js/dots.js`, `red/assets/` (Departure Mono under the OFL, and the kitten sprite). Nothing in it depends on the root `css/main.css` or on Three.js, and all its paths are relative.
+- `red/index.html` has front matter `layout: none` (the default `compress` layout is not applied) and `sitemap: false` (`script/check-seo` requires the sitemap to list only the home page). Its canonical URL is `https://skz.dev/`.
+- The DOM does layout and carries the real text and links; `dots.js` reads word positions and paints them. Sizes in `red/css/main.css` are multiples of `--c`, one dot, which `dots.js` sets. Content changes on the home page have to be repeated in `red/index.html` by hand.

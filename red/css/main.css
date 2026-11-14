@@ -1,0 +1,240 @@
+/* ===================================================================
+   skz.dev, red dots edition.
+
+   Everything is measured in cells. One cell (--c) is one dot of the
+   canvas grid, and Departure Mono is an 11-cell pixel font with a
+   7-cell advance, so DOM layout lands exactly on the dot grid.
+
+   With JS: js/dots.js paints every visible pixel and this text is
+   transparent (html.dots). Without JS: the same page as plain red
+   pixel type on black.
+   =================================================================== */
+
+@font-face {
+	font-family: "Departure Mono";
+	src: url("../assets/fonts/DepartureMono-Regular.woff2") format("woff2");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+:root {
+	--c: 2px;                          /* overwritten by js/dots.js */
+	--red: #ff0000;
+	--ground: #000;
+	--gutter: calc(var(--c) * 12);
+	--mark-h: clamp(calc(var(--c) * 72), 40svh, calc(var(--c) * 200));
+}
+@media (max-width: 599px) {
+	:root { --c: 1.5px; }
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+	background: var(--ground);
+	scroll-behavior: smooth;
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
+}
+body {
+	background: var(--ground);
+	color: var(--red);
+	font-family: "Departure Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+	font-size: calc(var(--c) * 11);
+	line-height: calc(var(--c) * 14);
+	font-weight: 400;
+	-webkit-font-smoothing: none;
+	overflow-x: hidden;
+	min-height: 100%;
+}
+
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+h1, h2 { font-weight: 400; }
+
+/* --- The dot canvas ------------------------------------------------ */
+#dots {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 0;
+	display: none;
+	pointer-events: none;
+	image-rendering: crisp-edges;
+	image-rendering: pixelated;
+}
+html.dots #dots { display: block; }
+
+main { position: relative; z-index: 1; }
+
+/* While the renderer boots, show nothing rather than a flash of plain text. */
+html.js:not(.dots):not(.nodots) main { opacity: 0; }
+
+/* Renderer live: the DOM keeps layout, links and selection; the canvas draws. */
+html.dots main,
+html.dots main a { color: transparent; }
+html.dots main a:focus-visible { outline: none; }
+html.dots .rule { background: transparent; }
+html.dots .about-inner { border-color: transparent; }
+html.dots .mark .lam { visibility: hidden; }
+html.dots ::selection { background: rgba(255, 0, 0, 0.35); color: transparent; }
+
+/* --- Hero ---------------------------------------------------------- */
+.hero {
+	min-height: 100vh;
+	min-height: 100svh;
+	display: flex;
+	flex-direction: column;
+	padding: calc(var(--c) * 12) var(--gutter);
+}
+
+.bar {
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+.bar.top {
+	display: flex;
+	justify-content: space-between;
+	gap: calc(var(--c) * 14);
+}
+.bar.bot {
+	display: grid;
+	grid-template-columns: 1fr auto 1fr;
+	align-items: end;
+	column-gap: calc(var(--c) * 14);
+}
+.bar.bot .bar-r { justify-self: end; text-transform: none; }
+
+.stack {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: calc(var(--c) * 10);
+	padding: calc(var(--c) * 12) 0;
+	text-align: center;
+}
+
+/* The λ. Painted by the canvas as the figure in the storm; this box only
+   reserves its place (and shows a plain λ when the renderer is off). */
+.mark {
+	height: var(--mark-h);
+	width: calc(var(--mark-h) * 0.72);
+	display: grid;
+	place-items: center;
+}
+.mark .lam {
+	font-family: "EB Garamond", Georgia, "Times New Roman", serif;
+	font-style: italic;
+	font-size: calc(var(--mark-h) * 1.25);
+	line-height: 1;
+}
+
+.id {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: calc(var(--c) * 7);
+}
+.name {
+	font-size: calc(var(--c) * 33);
+	line-height: calc(var(--c) * 42);
+}
+.rule {
+	width: calc(var(--c) * 42);
+	height: var(--c);
+	background: var(--red);
+}
+
+.links {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: calc(var(--c) * 7) calc(var(--c) * 28);
+	text-transform: uppercase;
+}
+.social {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: calc(var(--c) * 7) calc(var(--c) * 28);
+}
+
+/* --- About --------------------------------------------------------- */
+.about {
+	position: relative;
+	min-height: 100vh;
+	min-height: 100svh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: calc(var(--c) * 40) var(--gutter);
+}
+.about-inner {
+	width: 100%;
+	max-width: calc(var(--c) * 376);          /* 48 characters plus padding */
+	padding: calc(var(--c) * 18) calc(var(--c) * 20) calc(var(--c) * 20);
+	border: var(--c) dotted var(--red);
+}
+.about-kicker {
+	text-transform: uppercase;
+	margin-bottom: calc(var(--c) * 10);
+}
+.about-title {
+	font-size: calc(var(--c) * 22);
+	line-height: calc(var(--c) * 28);
+	margin-bottom: calc(var(--c) * 16);
+}
+.about-body { line-height: calc(var(--c) * 18); }
+.about-body + .about-body { margin-top: calc(var(--c) * 16); }
+.about-body a { text-decoration: underline; }
+.back-top {
+	display: inline-block;
+	margin-top: calc(var(--c) * 24);
+	text-transform: uppercase;
+}
+
+/* The kitten in armor: an easter egg in the last corner of the page.
+   Painted by the canvas from assets/img/kitten.png, which holds the
+   reference clip's frames dot for dot (163 x 244 cells each). */
+.kitten {
+	position: absolute;
+	right: calc(var(--c) * 6);
+	bottom: 0;
+	width: calc(var(--c) * 163);
+	height: calc(var(--c) * 244);
+	pointer-events: none;
+}
+/* No room beside the card: make room under it. */
+@media (max-width: 1499px) {
+	.about { padding-bottom: calc(var(--c) * 262); }
+}
+
+/* --- Plain (no renderer) interaction states ------------------------ */
+html:not(.dots) a:not(.mark):hover,
+html:not(.dots) a:not(.mark):focus-visible {
+	background: var(--red);
+	color: var(--ground);
+	outline: none;
+}
+
+/* --- Responsive ---------------------------------------------------- */
+@media (max-width: 899px) {
+	.bar.bot {
+		grid-template-columns: 1fr;
+		justify-items: center;
+		row-gap: calc(var(--c) * 7);
+	}
+	.bar.bot .bar-l { display: none; }
+	.bar.bot .bar-r { justify-self: center; }
+}
+@media (max-width: 599px) {
+	.about { padding: calc(var(--c) * 28) var(--gutter) calc(var(--c) * 262); }
+	.about-inner { padding: calc(var(--c) * 14) calc(var(--c) * 10) calc(var(--c) * 16); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html { scroll-behavior: auto; }
+}
