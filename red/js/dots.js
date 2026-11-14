@@ -32,7 +32,9 @@ const canvas = document.getElementById('dots');
 const ctx = canvas.getContext('2d', { alpha: false });
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 const LINKS = 'main a:not(.mark)';  /* the λ is a link too, but it is drawn as the figure */
-const PERF = location.search.includes('perf');   /* ?perf logs frame costs to the console */
+const params = new URLSearchParams(location.search);
+const PERF = params.has('perf');               /* ?perf logs frame costs to the console */
+const FORCED_CELL = +params.get('cell') || 0; /* ?cell=3 fixes the dot size; tools/og-card.html uses it */
 
 /* 64x64 tile of uniform noise: dither jitter, thinning, and the intro dissolve. */
 const tile = new Float32Array(4096);
@@ -677,7 +679,7 @@ function resize() {
 	const dpr = window.devicePixelRatio || 1;
 	/* 2 px dots (1.5 px on phones), never more than about 1100 across, and always
 	   a whole number of device pixels so every dot is the same size. */
-	const want = vw < 600 ? 1.5 : Math.max(2, Math.ceil(vw / 1100));
+	const want = FORCED_CELL || (vw < 600 ? 1.5 : Math.max(2, Math.ceil(vw / 1100)));
 	cell = Math.max(1, Math.round(want * dpr)) / dpr;
 	unit = 3 / cell;
 	root.style.setProperty('--c', cell + 'px');
