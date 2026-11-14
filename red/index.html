@@ -1,0 +1,97 @@
+---
+layout: none
+permalink: /red/
+sitemap: false
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sasha Kuznetsov | AI Research Software Engineer &amp; Physicist</title>
+<meta name="description" content="Sasha Kuznetsov is a senior AI research software engineer at Google and an engineering physicist. Explore his background, writing, and projects.">
+<meta name="author" content="Sasha Kuznetsov">
+<meta name="theme-color" content="#000000">
+<link rel="canonical" href="https://skz.dev/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Crect width='16' height='16'/%3E%3Cpath fill='%23f00' d='M3 2h4v2H3zM6 4h2v2H6zM7 6h2v2H7zM8 8h2v2H8zM9 10h2v2H9zM10 12h3v2h-3zM6 8h2v2H6zM4 10h3v2H4zM3 12h2v2H3z'/%3E%3C/svg%3E">
+<script>
+/* Content stays hidden only while the dot renderer is starting; if it never
+   starts, the plain red text version is shown instead. */
+document.documentElement.classList.add('js');
+setTimeout(function () {
+	var c = document.documentElement.classList;
+	if (!c.contains('dots')) c.add('nodots');
+}, 4000);
+</script>
+<link rel="preload" href="assets/fonts/DepartureMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@1&amp;text=%CE%BB&amp;display=swap">
+<link rel="stylesheet" href="css/main.css">
+</head>
+<body id="top">
+
+<canvas id="dots" aria-hidden="true"></canvas>
+
+<main>
+	<section class="hero">
+		<div class="bar top" aria-hidden="true">
+			<span class="bar-l" data-shelf>SKZ.DEV</span>
+			<span class="bar-r" data-shelf>EST · MMXX</span>
+		</div>
+
+		<div class="stack">
+			<!-- Easter egg: the λ switches between this mode and the regular site. -->
+			<a class="mark" href="../" aria-hidden="true" tabindex="-1" data-nodots><span class="lam">&#x03BB;</span></a>
+
+			<div class="id" data-shelf>
+				<h1 class="name">Sasha Kuznetsov</h1>
+				<div class="rule" data-rule></div>
+				<p class="tagline">Software engineer, physicist &amp; hacker</p>
+			</div>
+
+			<nav class="links" aria-label="Primary" data-shelf>
+				<a href="mailto:me@skz.dev">Get in touch <span aria-hidden="true">↗</span></a>
+				<a href="https://blog.skz.dev">Read the blog <span aria-hidden="true">↗</span></a>
+				<a href="https://directory.skz.dev">Project directory <span aria-hidden="true">↗</span></a>
+			</nav>
+
+			<ul class="social" aria-label="Elsewhere" data-shelf>
+				<li><a href="https://www.linkedin.com/in/skzv" target="_blank" rel="noopener">LinkedIn</a></li>
+				<li><a href="https://github.com/skzv" target="_blank" rel="noopener">GitHub</a></li>
+				<li><a href="https://twitter.com/_skzv" target="_blank" rel="noopener" aria-label="X (Twitter)">X</a></li>
+				<li><a href="https://instagram.com/_skzv7" target="_blank" rel="noopener">Instagram</a></li>
+			</ul>
+		</div>
+
+		<div class="bar bot">
+			<span class="bar-l" aria-hidden="true" data-shelf>Sasha Kuznetsov · MMXXVI</span>
+			<a class="cue" href="#about" aria-label="Scroll for more" data-shelf>More <span aria-hidden="true">↓</span></a>
+			<span class="bar-r" aria-hidden="true" data-shelf>Fig. λ · Calibration Card</span>
+		</div>
+	</section>
+
+	<section class="about" id="about" aria-labelledby="about-h">
+		<div class="about-inner" data-shelf="0.06" data-box>
+			<div class="about-kicker">About</div>
+			<h2 id="about-h" class="about-title">About Sasha Kuznetsov</h2>
+			<p class="about-body">
+				I'm a senior AI research software engineer at Google, an engineering physicist by training. I work and tinker across math, physics, computer engineering, quantitative finance, robotics, and more.
+			</p>
+			<p class="about-body">
+				Off hours: hip hop dance, guitar, the gym, hiking, scuba diving, sailing.
+			</p>
+			<p class="about-body">
+				I write on <a href="https://blog.skz.dev">my blog on math, physics, and engineering</a> and keep projects at <a href="https://directory.skz.dev">my project directory</a>. Say hello: <a href="mailto:me@skz.dev">me@skz.dev</a>.
+			</p>
+			<a class="back-top" href="#top"><span aria-hidden="true">↑</span> Back to top</a>
+		</div>
+		<!-- Easter egg: the kitten in armor keeps watch at the end of the page. -->
+		<div class="kitten" aria-hidden="true"></div>
+	</section>
+</main>
+
+<script type="module" src="js/dots.js"></script>
+{% include analytics.html %}
+</body>
+</html>
