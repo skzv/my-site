@@ -101,7 +101,7 @@ html.dots ::selection { background: rgba(255, 0, 0, 0.35); color: transparent; }
 .bar.bot {
 	display: grid;
 	grid-template-columns: 1fr auto 1fr;
-	align-items: end;
+	align-items: center;
 	column-gap: calc(var(--c) * 14);
 }
 .bar.bot .bar-r { justify-self: end; text-transform: none; }
@@ -142,24 +142,34 @@ html.dots ::selection { background: rgba(255, 0, 0, 0.35); color: transparent; }
 	font-size: calc(var(--c) * 33);
 	line-height: calc(var(--c) * 42);
 }
+.nb { white-space: nowrap; }
 .rule {
 	width: calc(var(--c) * 42);
 	height: var(--c);
 	background: var(--red);
 }
 
-.links {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
-	gap: calc(var(--c) * 7) calc(var(--c) * 28);
-	text-transform: uppercase;
-}
+.links,
 .social {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
-	gap: calc(var(--c) * 7) calc(var(--c) * 28);
+	gap: 0 calc(var(--c) * 28);
+	margin: calc(var(--c) * -6) 0;         /* the links' own padding supplies the spacing */
+}
+.links { text-transform: uppercase; }
+
+/* Room around every standalone link, so it is easy to hit with a finger. */
+.links a,
+.social a,
+.cue,
+.back-top {
+	display: inline-block;
+	padding: calc(var(--c) * 6) 0;
+}
+.social a {
+	min-width: calc(var(--c) * 26);        /* "X" is one character wide */
+	text-align: center;
 }
 
 /* --- About --------------------------------------------------------- */
@@ -174,7 +184,7 @@ html.dots ::selection { background: rgba(255, 0, 0, 0.35); color: transparent; }
 }
 .about-inner {
 	width: 100%;
-	max-width: calc(var(--c) * 376);          /* 48 characters plus padding */
+	max-width: calc(var(--c) * 348);          /* 44 characters plus padding */
 	padding: calc(var(--c) * 18) calc(var(--c) * 20) calc(var(--c) * 20);
 	border: var(--c) dotted var(--red);
 }
@@ -191,25 +201,24 @@ html.dots ::selection { background: rgba(255, 0, 0, 0.35); color: transparent; }
 .about-body + .about-body { margin-top: calc(var(--c) * 16); }
 .about-body a { text-decoration: underline; }
 .back-top {
-	display: inline-block;
-	margin-top: calc(var(--c) * 24);
+	margin-top: calc(var(--c) * 18);
 	text-transform: uppercase;
 }
 
 /* The kitten in armor: an easter egg in the last corner of the page.
    Painted by the canvas from assets/img/kitten.png, which holds the
-   reference clip's frames dot for dot (163 x 244 cells each). */
+   reference clip's frames dot for dot (164 x 246 cells each). */
 .kitten {
 	position: absolute;
 	right: calc(var(--c) * 6);
 	bottom: 0;
-	width: calc(var(--c) * 163);
-	height: calc(var(--c) * 244);
+	width: calc(var(--c) * 164);
+	height: calc(var(--c) * 246);
 	pointer-events: none;
 }
 /* No room beside the card: make room under it. */
-@media (max-width: 1499px) {
-	.about { padding-bottom: calc(var(--c) * 262); }
+@media (max-width: 1419px) {
+	.about { padding-bottom: calc(var(--c) * 264); }
 }
 
 /* --- Plain (no renderer) interaction states ------------------------ */
@@ -231,7 +240,14 @@ html:not(.dots) a:not(.mark):focus-visible {
 	.bar.bot .bar-r { justify-self: center; }
 }
 @media (max-width: 599px) {
-	.about { padding: calc(var(--c) * 28) var(--gutter) calc(var(--c) * 262); }
+	/* Phones: keep the whole hero on the first screen. */
+	:root { --mark-h: clamp(calc(var(--c) * 60), 27svh, calc(var(--c) * 200)); }
+	.stack { gap: calc(var(--c) * 8); padding: calc(var(--c) * 6) 0; }
+	.name { font-size: calc(var(--c) * 22); line-height: calc(var(--c) * 28); }
+	.links a, .social a, .cue, .back-top { padding: calc(var(--c) * 5) 0; }
+	.links, .social { margin: calc(var(--c) * -5) 0; }
+	.social { gap: 0 calc(var(--c) * 7); }
+	.about { padding: calc(var(--c) * 28) var(--gutter) calc(var(--c) * 264); }
 	.about-inner { padding: calc(var(--c) * 14) calc(var(--c) * 10) calc(var(--c) * 16); }
 }
 
