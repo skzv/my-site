@@ -50,10 +50,10 @@ canvas { display: block; }
 	z-index: 1;
 	pointer-events: none;
 	background:
-		/* "reading shelf": soft darker ellipse behind the content stack */
+		/* "reading shelf": gentle center darkening that leaves particles bright for frosted orbs */
 		radial-gradient(ellipse 55% 32% at 50% 52%,
-			rgba(0,0,0,0.55) 0%,
-			rgba(0,0,0,0.22) 55%,
+			rgba(0,0,0,0.18) 0%,
+			rgba(0,0,0,0.08) 55%,
 			rgba(0,0,0,0)    100%),
 		/* general edge vignette */
 		radial-gradient(ellipse at 50% 48%,
@@ -183,16 +183,15 @@ canvas { display: block; }
 	gap: 14px;
 	padding: 22px 40px 26px;
 	border-radius: 8px;
-	background: rgba(8,8,10,0.12);
-	backdrop-filter: blur(28px) saturate(130%);
-	-webkit-backdrop-filter: blur(28px) saturate(130%);
+	background: rgba(8,8,10,0.14);
+	backdrop-filter: blur(8px) brightness(1.45);
+	-webkit-backdrop-filter: blur(8px) brightness(1.45);
 	border: 1px solid rgba(255,255,255,0.08);
 	box-shadow:
 		0 1px 0 rgba(255,255,255,0.06) inset,
 		0 18px 60px rgba(0,0,0,0.45);
-	opacity: 0;
-	transform: translateY(10px);
-	animation: rise 700ms cubic-bezier(.2,.7,.2,1) 320ms forwards;
+	transform: translateY(6px);
+	animation: settle 520ms cubic-bezier(.2,.7,.2,1) forwards;
 }
 
 .name {
@@ -328,6 +327,9 @@ canvas { display: block; }
 @keyframes rise {
 	to { opacity: 1; transform: translateY(0); }
 }
+@keyframes settle {
+	to { transform: translateY(0); }
+}
 @keyframes breath {
 	0%, 100% { text-shadow: 0 0 24px rgba(255,255,255,0.18), 0 2px 30px rgba(0,0,0,0.55); }
 	50%      { text-shadow: 0 0 38px rgba(255,255,255,0.30), 0 2px 30px rgba(0,0,0,0.55); }
@@ -412,9 +414,9 @@ canvas { display: block; }
 	text-align: left;
 	padding: 38px 44px 42px;
 	border-radius: 8px;
-	background: rgba(8,8,10,0.42);
-	backdrop-filter: blur(28px) saturate(125%);
-	-webkit-backdrop-filter: blur(28px) saturate(125%);
+	background: rgba(8,8,10,0.40);
+	backdrop-filter: blur(10px) brightness(1.25);
+	-webkit-backdrop-filter: blur(10px) brightness(1.25);
 	border: 1px solid rgba(255,255,255,0.08);
 	box-shadow:
 		0 1px 0 rgba(255,255,255,0.06) inset,
@@ -454,6 +456,30 @@ canvas { display: block; }
 	transition: border-color 240ms ease;
 }
 .about-body a:hover, .about-body a:focus-visible {
+	border-bottom-color: var(--ink);
+	outline: none;
+}
+.about-writing {
+	margin-top: 28px;
+	padding-top: 22px;
+	border-top: 1px solid rgba(255,255,255,0.08);
+}
+.writing-list {
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+.writing-list a {
+	font-family: var(--serif);
+	font-size: clamp(15px, 1.35vw, 17px);
+	line-height: 1.45;
+	color: rgba(255,255,255,0.86);
+	border-bottom: 1px solid var(--hair);
+	transition: color 240ms ease, border-color 240ms ease;
+}
+.writing-list a:hover, .writing-list a:focus-visible {
+	color: var(--ink);
 	border-bottom-color: var(--ink);
 	outline: none;
 }

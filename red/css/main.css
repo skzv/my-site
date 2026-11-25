@@ -200,6 +200,9 @@ html.dots ::selection { background: rgba(255, 0, 0, 0.35); color: transparent; }
 .about-body { line-height: calc(var(--c) * 18); }
 .about-body + .about-body { margin-top: calc(var(--c) * 16); }
 .about-body a { text-decoration: underline; }
+.about-writing { margin-top: calc(var(--c) * 20); }
+.writing-list { display: flex; flex-direction: column; gap: calc(var(--c) * 10); }
+.writing-list a { text-decoration: underline; line-height: calc(var(--c) * 16); }
 .back-top {
 	margin-top: calc(var(--c) * 18);
 	text-transform: uppercase;
