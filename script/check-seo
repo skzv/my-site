@@ -2,42 +2,89 @@
 require 'nokogiri'
 require 'json'
 require 'open3'
+require 'yaml'
 
 root = ARGV.fetch(0, '_site')
-html = File.read(File.join(root, 'index.html'))
-doc = Nokogiri::HTML(html)
+locales = YAML.load_file('_data/locales.yml')
+i18n = YAML.load_file('_data/i18n.yml')
+
 def check(value, message)
   abort message unless value
 end
-check(doc.css('title').size == 1, 'Expected one title')
-check(doc.at_css('title').text == 'Sasha Kuznetsov | AI Research Software Engineer & Physicist', 'Unexpected title')
-%w[description og:title og:description og:url og:type og:image og:image:type og:image:width og:image:height og:image:alt twitter:card twitter:description twitter:image twitter:image:alt].each do |key|
-  nodes = doc.css("meta[name='#{key}'], meta[property='#{key}']")
-  check(nodes.size == 1 && !nodes.first['content'].empty?, "Missing or duplicate #{key}")
+
+expected_sitemap = ['/red/'].map { |p| "https://skz.dev#{p}" }
+
+locales.each do |loc|
+  code = loc.fetch('code')
+  prefix = loc.fetch('prefix')
+  tag = loc.fetch('tag')
+  og_locale = loc.fetch('og')
+  t = i18n.fetch(code)
+  canonical = "https://skz.dev#{prefix}"
+  expected_sitemap << canonical
+
+  rel_path = prefix == '/' ? 'index.html' : File.join(prefix.delete_prefix('/'), 'index.html')
+  full_path = File.join(root, rel_path)
+  check(File.exist?(full_path), "#{code}: missing #{rel_path}")
+
+  html = File.read(full_path)
+  doc = Nokogiri::HTML(html)
+
+  check(doc.at_css('html')['lang'] == tag, "#{code}: expected html[lang=#{tag}]")
+  check(doc.css('title').size == 1, "#{code}: expected one title")
+  check(doc.at_css('title').text == t.fetch('page_title'), "#{code}: unexpected title #{doc.at_css('title').text.inspect}")
+
+  %w[description og:title og:description og:url og:type og:locale og:image og:image:type og:image:width og:image:height og:image:alt twitter:card twitter:description twitter:image twitter:image:alt].each do |key|
+    nodes = doc.css("meta[name='#{key}'], meta[property='#{key}']")
+    check(nodes.size == 1 && !nodes.first['content'].empty?, "#{code}: missing or duplicate #{key}")
+  end
+
+  check(doc.at_css("meta[property='og:locale']")['content'] == og_locale, "#{code}: wrong og:locale")
+  alt_og = doc.css("meta[property='og:locale:alternate']").map { |n| n['content'] }.sort
+  expected_alt_og = locales.reject { |l| l['code'] == code }.map { |l| l['og'] }.sort
+  check(alt_og == expected_alt_og, "#{code}: unexpected og:locale:alternate")
+
+  check(doc.css('link[rel=canonical]').size == 1 && doc.at_css('link[rel=canonical]')['href'] == canonical, "#{code}: invalid canonical")
+  check(doc.at_css("meta[property='og:url']")['content'] == canonical, "#{code}: og:url differs from canonical")
+
+  hreflangs = doc.css('link[rel=alternate][hreflang]').to_h { |n| [n['hreflang'], n['href']] }
+  expected_hreflangs = locales.to_h { |l| [l['tag'], "https://skz.dev#{l['prefix']}"] }.merge('x-default' => 'https://skz.dev/')
+  check(hreflangs == expected_hreflangs, "#{code}: hreflang mismatch")
+
+  check(doc.css('main').size == 1 && doc.css('main h1').size == 1 && doc.css('main #about').size == 1, "#{code}: invalid landmarks")
+  check(doc.at_css('main #about')['aria-labelledby'] == 'about-h' && doc.css('main #about h2#about-h').size == 1, "#{code}: about aria-labelledby mismatch")
+  check(doc.css('meta[name=robots]').none? { |n| n['content'].include?('noindex') }, "#{code}: unexpected noindex")
+  check(doc.css('meta[name=robots]').any? { |n| n['content'].include?('max-image-preview:large') }, "#{code}: missing max-image-preview:large")
+  check(doc.css('details[data-language-picker] a[aria-current="page"]').size == 1, "#{code}: missing active language switcher item")
+
+  scripts = doc.css('script[type="application/ld+json"]')
+  check(scripts.size == 1, "#{code}: expected one structured-data graph")
+  graph = JSON.parse(scripts.first.text).fetch('@graph')
+  person = graph.find { |n| n['@type'] == 'Person' }
+  website = graph.find { |n| n['@type'] == 'WebSite' }
+  profile_page = graph.find { |n| n['@type'] == 'ProfilePage' }
+  check(person && website && profile_page && website.fetch('author')['@id'] == person['@id'] && profile_page.dig('mainEntity', '@id') == person['@id'], "#{code}: disconnected identity graph")
+  check(profile_page['inLanguage'] == tag && website['inLanguage'] == tag, "#{code}: JSON-LD inLanguage mismatch")
+  check(person.fetch('knowsAbout').is_a?(Array) && !person['knowsAbout'].empty?, "#{code}: Person schema must include knowsAbout")
+  check(person.fetch('sameAs').all? { |url| doc.css('a').any? { |a| a['href'] == url } }, "#{code}: schema profiles must match visible links")
+  %w[https://www.linkedin.com/in/skzv https://github.com/skzv https://twitter.com/_skzv https://instagram.com/_skzv7].each do |url|
+    link = doc.at_css("a[href='#{url}']")
+    check(link && link['rel'].to_s.split.include?('me'), "#{code}: social link missing rel=me: #{url}")
+  end
+  check(doc.css('a[href="/red/"]').any? { |a| a['aria-hidden'] != 'true' }, "#{code}: must include an accessible crawlable link to /red/")
+  check(html.index('<meta charset=') < 1024, "#{code}: charset must appear early")
+
+  doc.css('script:not([src])').each do |script|
+    next unless [nil, 'module', 'text/javascript'].include?(script['type'])
+    _, error, status = Open3.capture3('node', '--check', '--input-type=module', stdin_data: script.text)
+    check(status.success?, "#{code}: invalid generated JavaScript: #{error}")
+  end
 end
-check(doc.css('link[rel=canonical]').size == 1 && doc.at_css('link[rel=canonical]')['href'] == 'https://skz.dev/', 'Invalid canonical')
-check(doc.css('main').size == 1 && doc.css('main h1').size == 1 && doc.css('main #about').size == 1, 'Invalid landmarks')
-check(doc.at_css('main #about')['aria-labelledby'] == 'about-h' && doc.css('main #about h2#about-h').size == 1, 'About section aria-labelledby must reference h2#about-h')
-check(doc.css('meta[name=robots]').none? { |n| n['content'].include?('noindex') }, 'Unexpected noindex')
-scripts = doc.css('script[type="application/ld+json"]')
-check(scripts.size == 1, 'Expected one structured-data graph')
-graph = JSON.parse(scripts.first.text).fetch('@graph')
-person = graph.find { |n| n['@type'] == 'Person' }
-website = graph.find { |n| n['@type'] == 'WebSite' }
-profile_page = graph.find { |n| n['@type'] == 'ProfilePage' }
-check(person && website && profile_page && website.fetch('author')['@id'] == person['@id'] && profile_page.dig('mainEntity', '@id') == person['@id'], 'Disconnected identity graph')
-check(person.fetch('knowsAbout').is_a?(Array) && !person['knowsAbout'].empty?, 'Person schema must include knowsAbout')
-check(person.fetch('sameAs').all? { |url| doc.css('a').any? { |a| a['href'] == url } }, 'Schema profiles must match visible links')
-%w[https://www.linkedin.com/in/skzv https://github.com/skzv https://twitter.com/_skzv https://instagram.com/_skzv7].each do |url|
-  link = doc.at_css("a[href='#{url}']")
-  check(link && link['rel'].to_s.split.include?('me'), "Social link missing rel=me: #{url}")
-end
-check(doc.css('a[href="/red/"]').any? { |a| a['aria-hidden'] != 'true' }, 'Home page must include an accessible crawlable link to /red/')
-check(html.index('<meta charset=') < 1024, 'Charset must appear early')
+
 check(File.exist?(File.join(root, 'assets/img/preview-banner.png')), 'Missing preview')
 check(File.size(File.join(root, 'favicon.ico')) < 32_768, 'favicon.ico is too large')
 xml = Nokogiri::XML(File.read(File.join(root, 'sitemap.xml'))) { |config| config.strict }
-check(xml.xpath('//*[local-name()="loc"]').map(&:text).sort == ['https://skz.dev/', 'https://skz.dev/red/'], 'Unexpected sitemap URLs')
+check(xml.xpath('//*[local-name()="loc"]').map(&:text).sort == expected_sitemap.sort, "Unexpected sitemap URLs: #{xml.xpath('//*[local-name()="loc"]').map(&:text).sort.inspect}")
 robots = File.read(File.join(root, 'robots.txt'))
 check(robots.include?('User-agent: *') && robots.include?('Sitemap: https://skz.dev/sitemap.xml'), 'Invalid robots.txt')
 not_found = Nokogiri::HTML(File.read(File.join(root, '404.html')))
@@ -45,13 +92,13 @@ check(not_found.css('meta[name=robots]').any? { |n| n['content'].include?('noind
 %w[CLAUDE.md README.md LICENSE script sasha-kuznetsov-design-system].each do |path|
   check(!File.exist?(File.join(root, path)), "Development file published: #{path}")
 end
-doc.css('script:not([src])').each do |script|
-  next unless [nil, 'module', 'text/javascript'].include?(script['type'])
-  _, error, status = Open3.capture3('node', '--check', '--input-type=module', stdin_data: script.text)
-  check(status.success?, "Invalid generated JavaScript: #{error}")
-end
-# Red mode (/red/): indexable standalone 1-bit dithered canvas edition with its own canonical,
-# sitemap entry, preview card, and BreadcrumbList tied to the #website/#person identity graph.
+
+# Red mode (/red/): indexable standalone 1-bit dithered canvas edition
+home_doc = Nokogiri::HTML(File.read(File.join(root, 'index.html')))
+home_graph = JSON.parse(home_doc.at_css('script[type="application/ld+json"]').text).fetch('@graph')
+person = home_graph.find { |n| n['@type'] == 'Person' }
+website = home_graph.find { |n| n['@type'] == 'WebSite' }
+
 red = Nokogiri::HTML(File.read(File.join(root, 'red/index.html')))
 check(red.css('title').size == 1 && red.at_css('title').text.start_with?('Sasha Kuznetsov'), 'Red: unexpected title')
 %w[description og:title og:description og:url og:type og:image og:image:type og:image:width og:image:height og:image:alt twitter:card twitter:title twitter:description twitter:image twitter:image:alt].each do |key|
@@ -78,4 +125,4 @@ check(person.fetch('sameAs').all? { |url| red.css('a').any? { |link| link['href'
 _, red_js_err, red_js_status = Open3.capture3('node', '--check', File.join(root, 'red/js/dots.js'))
 check(red_js_status.success?, "Red: invalid dots.js: #{red_js_err}")
 
-puts 'SEO and generated JavaScript checks passed'
+puts "SEO and generated JavaScript checks passed (#{locales.size} languages + /red/)"

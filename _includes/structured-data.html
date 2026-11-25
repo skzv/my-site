@@ -1,3 +1,7 @@
+{% assign lang_code = page.lang_code | default: 'en' %}
+{% assign locale = site.data.locales | where: "code", lang_code | first %}
+{% assign t = site.data.i18n[lang_code] %}
+{% assign page_url = site.url | append: locale.prefix %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -7,18 +11,18 @@
       "@id": "{{ site.url }}/#website",
       "url": {{ site.url | append: '/' | jsonify }},
       "name": {{ site.title | jsonify }},
-      "description": {{ site.description | jsonify }},
-      "inLanguage": "en",
+      "description": {{ t.description | jsonify }},
+      "inLanguage": {{ locale.tag | jsonify }},
       "author": { "@id": "{{ site.url }}/#person" },
       "about": { "@id": "{{ site.url }}/#person" }
     },
     {
       "@type": "ProfilePage",
-      "@id": "{{ site.url }}/#profilepage",
-      "url": {{ site.url | append: '/' | jsonify }},
-      "name": {{ site.title | append: ' | ' | append: site.tagline | jsonify }},
-      "description": {{ site.description | jsonify }},
-      "inLanguage": "en",
+      "@id": "{{ page_url }}#profilepage",
+      "url": {{ page_url | jsonify }},
+      "name": {{ t.page_title | jsonify }},
+      "description": {{ t.description | jsonify }},
+      "inLanguage": {{ locale.tag | jsonify }},
       "isPartOf": { "@id": "{{ site.url }}/#website" },
       "mainEntity": { "@id": "{{ site.url }}/#person" },
       "primaryImageOfPage": {
@@ -33,20 +37,13 @@
       "@id": "{{ site.url }}/#person",
       "name": {{ site.author.name | jsonify }},
       "url": {{ site.url | append: '/' | jsonify }},
-      "mainEntityOfPage": { "@id": "{{ site.url }}/#profilepage" },
-      "description": {{ site.description | jsonify }},
-      "jobTitle": "Senior AI research software engineer",
+      "mainEntityOfPage": { "@id": "{{ page_url }}#profilepage" },
+      "description": {{ t.description | jsonify }},
+      "jobTitle": {{ t.job_title | jsonify }},
       "worksFor": { "@type": "Organization", "name": "Google" },
-      "knowsAbout": [
-        "Artificial Intelligence",
-        "Machine Learning",
-        "Engineering Physics",
-        "Software Engineering",
-        "Quantitative Finance",
-        "Robotics"
-      ],
+      "knowsAbout": {{ t.knows_about | jsonify }},
       "sameAs": [
-        "https://blog.skz.dev",
+        "{% if lang_code == 'en' %}{{ t.blog_base }}{% else %}{{ t.blog_base }}/{% endif %}",
         "https://directory.skz.dev",
         "https://www.linkedin.com/in/skzv",
         "https://github.com/skzv",

@@ -1,19 +1,33 @@
+{% assign lang_code = page.lang_code | default: 'en' %}
+{% assign locale = site.data.locales | where: "code", lang_code | first %}
+{% assign t = site.data.i18n[lang_code] %}
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#000000">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<title>{{ t.page_title | escape }}</title>
 {% comment %}
   Keep the plugin's metadata, replacing its anonymous JSON-LD author with
   one connected WebSite/ProfilePage/Person graph. The production SEO check verifies this boundary.
 {% endcomment %}
-{% capture seo_output %}{% seo %}{% endcapture %}
+{% capture seo_output %}{% seo title=false %}{% endcapture %}
 {{ seo_output | split: '<script type="application/ld+json">' | first }}
 <!-- End Jekyll SEO metadata -->
+{% for alt in site.data.locales %}
+<link rel="alternate" hreflang="{{ alt.tag }}" href="{{ site.url }}{{ alt.prefix }}">
+{% endfor %}
+<link rel="alternate" hreflang="x-default" href="{{ site.url }}/">
+{% for alt in site.data.locales %}
+{% if alt.code != lang_code %}
+<meta property="og:locale:alternate" content="{{ alt.og }}">
+{% endif %}
+{% endfor %}
 <link rel="icon" href="/assets/img/favicon.png">
 <link rel="apple-touch-icon" href="/assets/img/favicon.png">
 <link type="text/css" rel="stylesheet" href="/css/main.css">
 <meta property="og:type" content="website">
 <meta property="og:image:type" content="image/png">
-<meta property="og:image:alt" content="{{ page.image.alt | escape }}">
-<meta name="twitter:description" content="{{ page.description | default: site.description | escape }}">
-<meta name="twitter:image:alt" content="{{ page.image.alt | escape }}">
+<meta property="og:image:alt" content="{{ t.image_alt | default: page.image.alt | escape }}">
+<meta name="twitter:description" content="{{ page.description | default: t.description | default: site.description | escape }}">
+<meta name="twitter:image:alt" content="{{ t.image_alt | default: page.image.alt | escape }}">
 {% include structured-data.html %}
