@@ -8,18 +8,46 @@
       "url": {{ site.url | append: '/' | jsonify }},
       "name": {{ site.title | jsonify }},
       "description": {{ site.description | jsonify }},
+      "inLanguage": "en",
       "author": { "@id": "{{ site.url }}/#person" },
       "about": { "@id": "{{ site.url }}/#person" }
+    },
+    {
+      "@type": "ProfilePage",
+      "@id": "{{ site.url }}/#profilepage",
+      "url": {{ site.url | append: '/' | jsonify }},
+      "name": {{ site.title | append: ' | ' | append: site.tagline | jsonify }},
+      "description": {{ site.description | jsonify }},
+      "inLanguage": "en",
+      "isPartOf": { "@id": "{{ site.url }}/#website" },
+      "mainEntity": { "@id": "{{ site.url }}/#person" },
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": {{ site.url | append: page.image.path | jsonify }},
+        "width": {{ page.image.width }},
+        "height": {{ page.image.height }}
+      }
     },
     {
       "@type": "Person",
       "@id": "{{ site.url }}/#person",
       "name": {{ site.author.name | jsonify }},
       "url": {{ site.url | append: '/' | jsonify }},
+      "mainEntityOfPage": { "@id": "{{ site.url }}/#profilepage" },
       "description": {{ site.description | jsonify }},
       "jobTitle": "Senior AI research software engineer",
       "worksFor": { "@type": "Organization", "name": "Google" },
+      "knowsAbout": [
+        "Artificial Intelligence",
+        "Machine Learning",
+        "Engineering Physics",
+        "Software Engineering",
+        "Quantitative Finance",
+        "Robotics"
+      ],
       "sameAs": [
+        "https://blog.skz.dev",
+        "https://directory.skz.dev",
         "https://www.linkedin.com/in/skzv",
         "https://github.com/skzv",
         "https://twitter.com/_skzv",

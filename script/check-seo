@@ -11,25 +11,37 @@ def check(value, message)
 end
 check(doc.css('title').size == 1, 'Expected one title')
 check(doc.at_css('title').text == 'Sasha Kuznetsov | AI Research Software Engineer & Physicist', 'Unexpected title')
-%w[description og:title og:description og:url og:type og:image og:image:width og:image:height og:image:alt twitter:card twitter:image twitter:image:alt].each do |key|
+%w[description og:title og:description og:url og:type og:image og:image:type og:image:width og:image:height og:image:alt twitter:card twitter:description twitter:image twitter:image:alt].each do |key|
   nodes = doc.css("meta[name='#{key}'], meta[property='#{key}']")
   check(nodes.size == 1 && !nodes.first['content'].empty?, "Missing or duplicate #{key}")
 end
 check(doc.css('link[rel=canonical]').size == 1 && doc.at_css('link[rel=canonical]')['href'] == 'https://skz.dev/', 'Invalid canonical')
 check(doc.css('main').size == 1 && doc.css('main h1').size == 1 && doc.css('main #about').size == 1, 'Invalid landmarks')
+check(doc.at_css('main #about')['aria-labelledby'] == 'about-h' && doc.css('main #about h2#about-h').size == 1, 'About section aria-labelledby must reference h2#about-h')
 check(doc.css('meta[name=robots]').none? { |n| n['content'].include?('noindex') }, 'Unexpected noindex')
 scripts = doc.css('script[type="application/ld+json"]')
 check(scripts.size == 1, 'Expected one structured-data graph')
 graph = JSON.parse(scripts.first.text).fetch('@graph')
 person = graph.find { |n| n['@type'] == 'Person' }
 website = graph.find { |n| n['@type'] == 'WebSite' }
-check(person && website && website.fetch('author')['@id'] == person['@id'], 'Disconnected identity graph')
+profile_page = graph.find { |n| n['@type'] == 'ProfilePage' }
+check(person && website && profile_page && website.fetch('author')['@id'] == person['@id'] && profile_page.dig('mainEntity', '@id') == person['@id'], 'Disconnected identity graph')
+check(person.fetch('knowsAbout').is_a?(Array) && !person['knowsAbout'].empty?, 'Person schema must include knowsAbout')
 check(person.fetch('sameAs').all? { |url| doc.css('a').any? { |a| a['href'] == url } }, 'Schema profiles must match visible links')
+%w[https://www.linkedin.com/in/skzv https://github.com/skzv https://twitter.com/_skzv https://instagram.com/_skzv7].each do |url|
+  link = doc.at_css("a[href='#{url}']")
+  check(link && link['rel'].to_s.split.include?('me'), "Social link missing rel=me: #{url}")
+end
+check(doc.css('a[href="/red/"]').any? { |a| a['aria-hidden'] != 'true' }, 'Home page must include an accessible crawlable link to /red/')
 check(html.index('<meta charset=') < 1024, 'Charset must appear early')
 check(File.exist?(File.join(root, 'assets/img/preview-banner.png')), 'Missing preview')
+check(File.size(File.join(root, 'favicon.ico')) < 32_768, 'favicon.ico is too large')
 xml = Nokogiri::XML(File.read(File.join(root, 'sitemap.xml'))) { |config| config.strict }
-check(xml.xpath('//*[local-name()="loc"]').map(&:text) == ['https://skz.dev/'], 'Unexpected sitemap URLs')
-check(File.read(File.join(root, 'robots.txt')).include?('Sitemap: https://skz.dev/sitemap.xml'), 'Missing sitemap declaration')
+check(xml.xpath('//*[local-name()="loc"]').map(&:text).sort == ['https://skz.dev/', 'https://skz.dev/red/'], 'Unexpected sitemap URLs')
+robots = File.read(File.join(root, 'robots.txt'))
+check(robots.include?('User-agent: *') && robots.include?('Sitemap: https://skz.dev/sitemap.xml'), 'Invalid robots.txt')
+not_found = Nokogiri::HTML(File.read(File.join(root, '404.html')))
+check(not_found.css('meta[name=robots]').any? { |n| n['content'].include?('noindex') }, '404.html must include noindex')
 %w[CLAUDE.md README.md LICENSE script sasha-kuznetsov-design-system].each do |path|
   check(!File.exist?(File.join(root, path)), "Development file published: #{path}")
 end
@@ -38,18 +50,19 @@ doc.css('script:not([src])').each do |script|
   _, error, status = Open3.capture3('node', '--check', '--input-type=module', stdin_data: script.text)
   check(status.success?, "Invalid generated JavaScript: #{error}")
 end
-# Red mode (/red/): same content as the home page, so the home page stays canonical,
-# but a link to it carries its own preview card.
+# Red mode (/red/): indexable standalone 1-bit dithered canvas edition with its own canonical,
+# sitemap entry, preview card, and BreadcrumbList tied to the #website/#person identity graph.
 red = Nokogiri::HTML(File.read(File.join(root, 'red/index.html')))
 check(red.css('title').size == 1 && red.at_css('title').text.start_with?('Sasha Kuznetsov'), 'Red: unexpected title')
-%w[description og:title og:description og:url og:type og:image og:image:width og:image:height og:image:alt twitter:card twitter:title twitter:description twitter:image twitter:image:alt].each do |key|
+%w[description og:title og:description og:url og:type og:image og:image:type og:image:width og:image:height og:image:alt twitter:card twitter:title twitter:description twitter:image twitter:image:alt].each do |key|
   nodes = red.css("meta[name='#{key}'], meta[property='#{key}']")
   check(nodes.size == 1 && !nodes.first['content'].empty?, "Red: missing or duplicate #{key}")
 end
-check(red.css('link[rel=canonical]').size == 1 && red.at_css('link[rel=canonical]')['href'] == 'https://skz.dev/', 'Red: canonical must be the home page')
+check(red.css('link[rel=canonical]').size == 1 && red.at_css('link[rel=canonical]')['href'] == 'https://skz.dev/red/', 'Red: canonical must be https://skz.dev/red/')
 check(red.at_css("meta[property='og:url']")['content'] == 'https://skz.dev/red/', 'Red: og:url must be the red page')
 check(red.at_css("meta[name='description']")['content'].length >= 100, 'Red: description too short for LinkedIn')
 check(red.css('meta[name=robots]').none? { |n| n['content'].include?('noindex') }, 'Red: unexpected noindex')
+check(red.css('meta[name=robots]').any? { |n| n['content'].include?('max-image-preview:large') }, 'Red: missing max-image-preview:large')
 check(red.css('main').size == 1 && red.css('main h1').size == 1 && red.css('main #about').size == 1, 'Red: invalid landmarks')
 red_image = red.at_css("meta[property='og:image']")['content']
 check(red_image == red.at_css("meta[name='twitter:image']")['content'], 'Red: og:image and twitter:image differ')
@@ -57,8 +70,12 @@ check(red_image.start_with?('https://skz.dev/'), 'Red: preview image must be an 
 red_image_path = File.join(root, red_image.delete_prefix('https://skz.dev/'))
 check(File.exist?(red_image_path), 'Red: missing preview image')
 check(File.binread(red_image_path, 8, 16).unpack('N2') == [1200, 630], 'Red: preview image must be 1200x630')
-red_graph = JSON.parse(red.at_css('script[type="application/ld+json"]').text)
-check(red_graph['@type'] == 'WebPage' && red_graph.dig('isPartOf', '@id') == website['@id'] && red_graph.dig('about', '@id') == person['@id'], 'Red: page is not connected to the identity graph')
+red_graph = JSON.parse(red.at_css('script[type="application/ld+json"]').text).fetch('@graph')
+red_page = red_graph.find { |n| n['@type'] == 'WebPage' }
+red_crumb = red_graph.find { |n| n['@type'] == 'BreadcrumbList' }
+check(red_page && red_crumb && red_page.dig('isPartOf', '@id') == website['@id'] && red_page.dig('about', '@id') == person['@id'], 'Red: page is not connected to the identity graph')
 check(person.fetch('sameAs').all? { |url| red.css('a').any? { |link| link['href'] == url } }, 'Red: profile links must match the home page')
+_, red_js_err, red_js_status = Open3.capture3('node', '--check', File.join(root, 'red/js/dots.js'))
+check(red_js_status.success?, "Red: invalid dots.js: #{red_js_err}")
 
 puts 'SEO and generated JavaScript checks passed'
