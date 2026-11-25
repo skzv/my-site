@@ -52,11 +52,12 @@ let kit = null;                    /* the kitten: { el, w, h, poses, x, y, on } 
 let streaks = [];
 let probe = null;                  /* measures the tallest the viewport gets (mobile toolbars hidden) */
 let last = 0, sceneClock = 0, lastScroll = -1;
-let reveal = 0, count = 0, time = 0, jx = 0, jy = 0;
+let reveal = 0, count = 0, time = 0, jx = 0, jy = 0, gust = 0;
 let sizeDirty = true, layoutDirty = true, sceneDirty = true, paintDirty = true;
 let mouseX = 0, mouseY = 0;
 const cam = { x: 200, y: 2000 };   /* starts high and settles, as on skz.dev */
-let hoverEl = null, focusEl = null;
+let hoverEl = null, focusEl = null, markHot = false;
+let rafId = null;
 const perf = { scene: 0, frame: 0, n: 0 };
 
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -178,7 +179,7 @@ function layout() {
 	anchors = [];
 	const anchorOf = new Map();
 	for (const el of document.querySelectorAll(LINKS)) {
-		const a = { el, lines: [], underline: !!el.closest('.about-body') };
+		const a = { el, lines: [], underline: !!el.closest('.about-body, .writing-list') };
 		anchorOf.set(el, a);
 		anchors.push(a);
 	}
@@ -352,11 +353,12 @@ function drawFigure() {
 			}
 			if (a > 0.004) {
 				const u = x * wx + y * wy, v = y * wx - x * wy;
-				const n = 0.65 * vnoise(u * 0.028 - t * 1.0, v * 0.2 + t * 0.07)
-					+ 0.35 * vnoise(u * 0.08 - t * 2.2, v * 0.5);
-				plume = a * smooth(0.32, 0.66, n);
+				const n = 0.65 * vnoise(u * 0.028 - t * (1.0 + gust * 0.9), v * 0.2 + t * 0.07)
+					+ 0.35 * vnoise(u * 0.08 - t * (2.2 + gust * 1.4), v * 0.5);
+				const boost = 1 + (markHot ? 0.35 : 0) + gust * 0.45;
+				plume = a * smooth(0.32 - gust * 0.08, 0.66, n) * boost;
 			}
-			tone[i] = (body + plume) * gain;
+			tone[i] = Math.min(1, (body + plume) * gain);
 			cover[i] = m > plume ? m : plume;
 		}
 	}
@@ -512,9 +514,10 @@ function seedStreaks() {
 
 function moveStreaks(dt) {
 	const W = cols + 2 * streakPad, H = rows + 2 * streakPad;
+	const mult = 1 + gust * 1.6;
 	for (const s of streaks) {
-		s.x -= s.dx * s.speed * dt;    /* down the line: left, and a little down */
-		s.y -= s.dy * s.speed * dt;
+		s.x -= s.dx * s.speed * mult * dt;    /* down the line: left, and a little down */
+		s.y -= s.dy * s.speed * mult * dt;
 		if (s.x < 0) s.x += W;
 		if (s.y >= H) s.y -= H;
 	}
@@ -716,8 +719,14 @@ function drawScene() {
 	if (PERF) perf.scene += performance.now() - t0;
 }
 
+function schedule() {
+	if (rafId !== null || document.hidden) return;
+	rafId = requestAnimationFrame(frame);
+}
+
 function frame(now) {
-	requestAnimationFrame(frame);
+	rafId = null;
+	if (document.hidden) return;
 	const t0 = PERF ? performance.now() : 0;
 	const dt = Math.min(0.1, Math.max(0, (now - last) / 1000));
 	last = now;
@@ -736,6 +745,8 @@ function frame(now) {
 	}
 
 	if (!reduce.matches) {
+		if (gust > 0.005) gust *= Math.exp(-dt * 2.6);
+		else gust = 0;
 		moveStreaks(dt);
 		if (reveal < 1) reveal = Math.min(1, reveal + dt / 1.25);
 		sceneClock += dt;
@@ -773,6 +784,8 @@ function frame(now) {
 			perf.scene = perf.frame = perf.n = 0;
 		}
 	}
+
+	if (!reduce.matches) schedule();
 }
 
 function settle() {
@@ -802,7 +815,7 @@ async function init() {
 			fonts.load('11px "Departure Mono"'),
 			fonts.load('italic 400 64px "EB Garamond"', 'λ'),
 		]).catch(() => {}),
-		new Promise((done) => setTimeout(done, 2500)),
+		new Promise((done) => setTimeout(done, 600)),
 	]);
 
 	resize();
@@ -813,10 +826,20 @@ async function init() {
 	root.classList.add('dots');
 	root.classList.remove('nodots');
 
-	window.addEventListener('resize', () => { sizeDirty = true; });
-	new ResizeObserver(() => { layoutDirty = true; }).observe(document.querySelector('main'));
-	fonts.addEventListener('loadingdone', refont);
-	reduce.addEventListener('change', () => { if (reduce.matches) settle(); paintDirty = true; });
+	window.addEventListener('resize', () => { sizeDirty = true; schedule(); });
+	window.addEventListener('scroll', () => { paintDirty = true; schedule(); }, { passive: true });
+	new ResizeObserver(() => { layoutDirty = true; schedule(); }).observe(document.querySelector('main'));
+	fonts.addEventListener('loadingdone', () => { refont(); schedule(); });
+	reduce.addEventListener('change', () => { if (reduce.matches) settle(); paintDirty = true; schedule(); });
+	document.addEventListener('visibilitychange', () => {
+		if (document.hidden) {
+			if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
+		} else {
+			last = performance.now();
+			paintDirty = true;
+			schedule();
+		}
+	});
 
 	window.addEventListener('pointermove', (e) => {
 		if (e.pointerType === 'touch') return;     /* a finger scrolls; it should not swing the camera */
@@ -824,23 +847,42 @@ async function init() {
 		mouseY = e.clientY - window.innerHeight / 2;
 	}, { passive: true });
 
+	/* Interactive hover/focus on the λ toggle and storm gust on background click. */
+	const markEl = document.querySelector('.mark');
+	const setMarkHot = (v) => { if (markHot !== v) { markHot = v; sceneDirty = true; schedule(); } };
+	if (markEl) {
+		markEl.addEventListener('pointerenter', () => setMarkHot(true));
+		markEl.addEventListener('pointerleave', () => setMarkHot(false));
+		markEl.addEventListener('focus', () => setMarkHot(true));
+		markEl.addEventListener('blur', () => setMarkHot(false));
+	}
+
 	/* Hover with a mouse; with a finger, light the link only while it is pressed. */
 	const link = (node) => (node instanceof Element ? node.closest(LINKS) : null);
-	const setHover = (el) => { if (hoverEl !== el) { hoverEl = el; paintDirty = true; } };
+	const setHover = (el) => { if (hoverEl !== el) { hoverEl = el; paintDirty = true; schedule(); } };
 	document.addEventListener('pointerover', (e) => { if (e.pointerType !== 'touch') setHover(link(e.target)); });
 	document.addEventListener('pointerout', (e) => { if (e.pointerType !== 'touch' && !link(e.relatedTarget)) setHover(null); });
-	document.addEventListener('pointerdown', (e) => { if (e.pointerType === 'touch') setHover(link(e.target)); });
+	document.addEventListener('pointerdown', (e) => {
+		if (e.pointerType === 'touch') setHover(link(e.target));
+		if (!reduce.matches && !(e.target instanceof Element && e.target.closest('a'))) {
+			gust = Math.min(1.5, gust + 0.9);
+			sceneDirty = true;
+			schedule();
+		}
+	});
 	document.addEventListener('pointerup', (e) => { if (e.pointerType === 'touch') setHover(null); });
 	document.addEventListener('pointercancel', () => setHover(null));
 	document.addEventListener('focusin', (e) => {
 		const a = link(e.target);
 		focusEl = a && a.matches(':focus-visible') ? a : null;
 		paintDirty = true;
+		schedule();
 	});
-	document.addEventListener('focusout', () => { focusEl = null; paintDirty = true; });
+	document.addEventListener('focusout', () => { focusEl = null; paintDirty = true; schedule(); });
 
 	loadKitten();
-	requestAnimationFrame(frame);
+	last = performance.now();
+	schedule();
 }
 
 init().catch((err) => {
